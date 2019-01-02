@@ -57,6 +57,9 @@ server: test/index.html
 lint: $(SRC)
 	${ESLINT} $^
 
+lint/fix: $(SRC)
+	${ESLINT} $^ --fix
+
 perf/*_perf.js:
 	${NODE} -r ./perf/perf_helper.js $@
 

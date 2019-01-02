@@ -1,7 +1,12 @@
 {
+  "parserOptions": {
+    "ecmaVersion": 2018
+  },
+
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "es6": true
   },
 
   "globals": {
@@ -26,7 +31,7 @@
           "whitespace", "automata", "i", "obj", "anymore", "lexer", "var", "refs",
           "serializable", "tis", "twas", "int", "args", "unshift", "plugins", "upsert",
           "upserting", "readonly", "baz", "tokenization", "lunrjs", "com", "olivernn",
-          "github", "js"
+          "github", "js", "ts", "typeof", "comparand"
         ]
       }
     ],

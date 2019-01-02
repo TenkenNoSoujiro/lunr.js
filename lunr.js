@@ -155,13 +155,13 @@ lunr.FieldRef = class FieldRef {
    * @param {string} fieldName
    * @param {string} [stringValue]
    */
-  constructor(docRef, fieldName, stringValue) {
+  constructor (docRef, fieldName, stringValue) {
     this.docRef = docRef
     this.fieldName = fieldName
     this._stringValue = stringValue
   }
 
-  toString() {
+  toString () {
     if (this._stringValue == undefined) {
       this._stringValue = this.fieldName + lunr.FieldRef.joiner + this.docRef
     }
@@ -197,7 +197,7 @@ lunr.Set = class Set {
   /**
    * @param {object[]} [elements]
    */
-  constructor(elements) {
+  constructor (elements) {
     /** @type {Record<object, boolean>} */
     this.elements = Object.create(null)
 
@@ -218,7 +218,7 @@ lunr.Set = class Set {
    * @param {object} object - Object whose presence in this set is to be tested.
    * @returns {boolean} - True if this set contains the specified object.
    */
-  contains(object) {
+  contains (object) {
     return !!this.elements[object]
   }
 
@@ -230,7 +230,7 @@ lunr.Set = class Set {
    * @returns {lunr.Set} a new set that is the intersection of this and the specified set.
    */
 
-  intersect(other) {
+  intersect (other) {
     var a, b, elements, intersection = []
 
     if (other === lunr.Set.complete) {
@@ -268,7 +268,7 @@ lunr.Set = class Set {
    * @return {lunr.Set} a new set that is the union of this and the specified set.
    */
 
-  union(other) {
+  union (other) {
     if (other === lunr.Set.complete) {
       return lunr.Set.complete
     }
@@ -359,7 +359,7 @@ lunr.Token = class Token {
    * @param {string} [str=''] - The string token being wrapped.
    * @param {object} [metadata={}] - Metadata associated with this token.
    */
-  constructor(str, metadata) {
+  constructor (str, metadata) {
     /** @type {string} */
     this.str = str || ""
     /** @type {object} */
@@ -371,7 +371,7 @@ lunr.Token = class Token {
    *
    * @returns {string}
    */
-  toString() {
+  toString () {
     return this.str
   }
 
@@ -386,7 +386,7 @@ lunr.Token = class Token {
    * @param {lunr.Token.updateFunction} fn - A function to apply to the token string.
    * @returns {lunr.Token}
    */
-  update(fn) {
+  update (fn) {
     this.str = fn(this.str, this.metadata)
     return this
   }
@@ -398,7 +398,7 @@ lunr.Token = class Token {
    * @param {lunr.Token.updateFunction} [fn] - An optional function to apply to the cloned token.
    * @returns {lunr.Token}
    */
-  clone(fn) {
+  clone (fn) {
     fn = fn || function (s) { return s }
     return new lunr.Token (fn(this.str, this.metadata), this.metadata)
   }
@@ -522,7 +522,7 @@ lunr.tokenizer.separator = /[\s\-]+/
  * @constructor
  */
 lunr.Pipeline = class Pipeline {
-  constructor() {
+  constructor () {
     /** @type {lunr.PipelineFunction[]} */
     this._stack = []
   }
@@ -539,7 +539,7 @@ lunr.Pipeline = class Pipeline {
    * @param {lunr.PipelineFunction} fn - The function to check for.
    * @param {String} label - The label to register this function with
    */
-  static registerFunction(fn, label) {
+  static registerFunction (fn, label) {
     if (label in this.registeredFunctions) {
       lunr.utils.warn('Overwriting existing registered function: ' + label)
     }
@@ -554,7 +554,7 @@ lunr.Pipeline = class Pipeline {
    * @param {lunr.PipelineFunction} fn - The function to check for.
    * @private
    */
-  static warnIfFunctionNotRegistered(fn) {
+  static warnIfFunctionNotRegistered (fn) {
     var isRegistered = fn.label && (fn.label in this.registeredFunctions)
 
     if (!isRegistered) {
@@ -572,7 +572,7 @@ lunr.Pipeline = class Pipeline {
    * @param {string[]} serialised - The serialised pipeline to load.
    * @returns {lunr.Pipeline}
    */
-  static load(serialised) {
+  static load (serialised) {
     var pipeline = new lunr.Pipeline
 
     serialised.forEach(function (fnName) {
@@ -595,7 +595,7 @@ lunr.Pipeline = class Pipeline {
    *
    * @param {lunr.PipelineFunction[]} functions - Any number of functions to add to the pipeline.
    */
-  add() {
+  add () {
     var fns = Array.prototype.slice.call(arguments)
 
     fns.forEach((fn) => {
@@ -613,7 +613,7 @@ lunr.Pipeline = class Pipeline {
    * @param {lunr.PipelineFunction} existingFn - A function that already exists in the pipeline.
    * @param {lunr.PipelineFunction} newFn - The new function to add to the pipeline.
    */
-  after(existingFn, newFn) {
+  after (existingFn, newFn) {
     lunr.Pipeline.warnIfFunctionNotRegistered(newFn)
 
     var pos = this._stack.indexOf(existingFn)
@@ -634,7 +634,7 @@ lunr.Pipeline = class Pipeline {
    * @param {lunr.PipelineFunction} existingFn - A function that already exists in the pipeline.
    * @param {lunr.PipelineFunction} newFn - The new function to add to the pipeline.
    */
-  before(existingFn, newFn) {
+  before (existingFn, newFn) {
     lunr.Pipeline.warnIfFunctionNotRegistered(newFn)
 
     var pos = this._stack.indexOf(existingFn)
@@ -650,7 +650,7 @@ lunr.Pipeline = class Pipeline {
    *
    * @param {lunr.PipelineFunction} fn The function to remove from the pipeline.
    */
-  remove(fn) {
+  remove (fn) {
     var pos = this._stack.indexOf(fn)
     if (pos == -1) {
       return
@@ -666,7 +666,7 @@ lunr.Pipeline = class Pipeline {
    * @param {lunr.Token[]} tokens The tokens to run through the pipeline.
    * @returns {lunr.Token[]}
    */
-  run(tokens) {
+  run (tokens) {
     var stackLength = this._stack.length
 
     for (var i = 0; i < stackLength; i++) {
@@ -705,7 +705,7 @@ lunr.Pipeline = class Pipeline {
    * passed to the pipeline.
    * @returns {string[]}
    */
-  runString(str, metadata) {
+  runString (str, metadata) {
     var token = new lunr.Token (str, metadata)
 
     return this.run([token]).map(function (t) {
@@ -717,7 +717,7 @@ lunr.Pipeline = class Pipeline {
    * Resets the pipeline by removing any existing processors.
    *
    */
-  reset() {
+  reset () {
     this._stack = []
   }
 
@@ -728,7 +728,7 @@ lunr.Pipeline = class Pipeline {
    *
    * @returns {Array}
    */
-  toJSON() {
+  toJSON () {
     return this._stack.map(function (fn) {
       lunr.Pipeline.warnIfFunctionNotRegistered(fn)
 
@@ -798,7 +798,7 @@ lunr.Vector = class Vector {
    * @param {number} index - The index at which the element should be inserted.
    * @returns {number}
    */
-  positionForIndex(index) {
+  positionForIndex (index) {
     // For an empty vector the tuple can be inserted at the beginning
     if (this.elements.length == 0) {
       return 0
@@ -839,7 +839,7 @@ lunr.Vector = class Vector {
     if (pivotIndex < index) {
       return (pivotPoint + 1) * 2
     }
-    return 0;
+    return 0
   }
 
   /**
@@ -851,7 +851,7 @@ lunr.Vector = class Vector {
    * @param {number} insertIdx - The index at which the element should be inserted.
    * @param {number} val - The value to be inserted into the vector.
    */
-  insert(insertIdx, val) {
+  insert (insertIdx, val) {
     this.upsert(insertIdx, val, function () {
       throw "duplicate index"
     })
@@ -865,7 +865,7 @@ lunr.Vector = class Vector {
    * @param {(a: number, b: number) => number} fn - A function that is called for updates, the existing value and the
    * requested value are passed as arguments
    */
-  upsert(insertIdx, val, fn) {
+  upsert (insertIdx, val, fn) {
     this._magnitude = 0
     var position = this.positionForIndex(insertIdx)
 
@@ -881,7 +881,7 @@ lunr.Vector = class Vector {
    *
    * @returns {number}
    */
-  magnitude() {
+  magnitude () {
     if (this._magnitude) return this._magnitude
 
     var sumOfSquares = 0,
@@ -901,7 +901,7 @@ lunr.Vector = class Vector {
    * @param {lunr.Vector} otherVector - The vector to compute the dot product with.
    * @returns {number}
    */
-  dot(otherVector) {
+  dot (otherVector) {
     var dotProduct = 0,
         a = this.elements, b = otherVector.elements,
         aLen = a.length, bLen = b.length,
@@ -931,7 +931,7 @@ lunr.Vector = class Vector {
    * similarity with.
    * @returns {number}
    */
-  similarity(otherVector) {
+  similarity (otherVector) {
     return this.dot(otherVector) / this.magnitude() || 0
   }
 
@@ -940,7 +940,7 @@ lunr.Vector = class Vector {
    *
    * @returns {number[]}
    */
-  toArray() {
+  toArray () {
     var output = new Array (this.elements.length / 2)
 
     for (var i = 1, j = 0; i < this.elements.length; i += 2, j++) {
@@ -955,7 +955,7 @@ lunr.Vector = class Vector {
    *
    * @returns {number[]}
    */
-  toJSON() {
+  toJSON () {
     return this.elements
   }
 
@@ -1406,7 +1406,7 @@ lunr.Pipeline.registerFunction(lunr.trimmer, 'trimmer')
  * @constructor
  */
 lunr.TokenSet = class TokenSet {
-  constructor() {
+  constructor () {
     this.final = false
     /** @type {Record<string, lunr.TokenSet>} */
     this.edges = {}
@@ -1414,7 +1414,7 @@ lunr.TokenSet = class TokenSet {
     lunr.TokenSet._nextId += 1
 
     /** @type {string | undefined} */
-    this._str;
+    this._str
   }
 
   /**
@@ -1423,7 +1423,7 @@ lunr.TokenSet = class TokenSet {
    *
    * @returns {string[]}
    */
-  toArray() {
+  toArray () {
     var words = []
 
     var stack = [{
@@ -1468,7 +1468,7 @@ lunr.TokenSet = class TokenSet {
    *
    * @returns {string}
    */
-  toString() {
+  toString () {
     // NOTE: Using Object.keys here as this.edges is very likely
     // to enter 'hash-mode' with many keys being added
     //
@@ -1505,7 +1505,7 @@ lunr.TokenSet = class TokenSet {
    * @param {lunr.TokenSet} b - An other TokenSet to intersect with.
    * @returns {lunr.TokenSet}
    */
-  intersect(b) {
+  intersect (b) {
     var output = new lunr.TokenSet
 
     var stack = [{
@@ -1608,13 +1608,13 @@ lunr.TokenSet.fromArray = function (arr) {
  */
 lunr.TokenSet.fromClause = function (clause) {
   if (typeof clause.term === "object") {
-    if (!clause.numberMap) throw new Error("A comparator or range clause requires a number map");
-    return "comparator" in clause.term 
-      ? clause.numberMap.matchComparator(clause.term.comparator, clause.term.comparand) 
+    if (!clause.numberMap) throw new Error("A comparator or range clause requires a number map")
+    return "comparator" in clause.term
+      ? clause.numberMap.matchComparator(clause.term.comparator, clause.term.comparand)
       : clause.numberMap.matchRange(clause.term.start, clause.term.end)
   }
-  return 'editDistance' in clause 
-    ? lunr.TokenSet.fromFuzzyString(clause.term, clause.editDistance) 
+  return 'editDistance' in clause
+    ? lunr.TokenSet.fromFuzzyString(clause.term, clause.editDistance)
     : lunr.TokenSet.fromString(clause.term)
 }
 
@@ -1814,7 +1814,7 @@ lunr.TokenSet.fromString = function (str) {
   return root
 }
 lunr.TokenSet.Builder = class Builder {
-  constructor() {
+  constructor () {
     this.previousWord = ""
     this.root = new lunr.TokenSet
     /** @type {{ parent: lunr.TokenSet, char: string, child: lunr.TokenSet }[]} */
@@ -1826,7 +1826,7 @@ lunr.TokenSet.Builder = class Builder {
   /**
    * @param {string} word
    */
-  insert(word) {
+  insert (word) {
     var node,
         commonPrefix = 0
 
@@ -1866,14 +1866,14 @@ lunr.TokenSet.Builder = class Builder {
     this.previousWord = word
   }
 
-  finish() {
+  finish () {
     this.minimize(0)
   }
 
   /**
    * @param {number} downTo
    */
-  minimize(downTo) {
+  minimize (downTo) {
     for (var i = this.uncheckedNodes.length - 1; i >= downTo; i--) {
       var node = this.uncheckedNodes[i],
           childKey = node.child.toString()
@@ -1894,7 +1894,7 @@ lunr.TokenSet.Builder = class Builder {
 }
 lunr.NumberMap = class NumberMap {
   /** @param {{ value: number, tokens: string[] }[]} entries */
-  constructor(entries) {
+  constructor (entries) {
     this.entries = entries
   }
 
@@ -1902,7 +1902,7 @@ lunr.NumberMap = class NumberMap {
    * @param {lunr.Query.operator} comparator
    * @param {number} comparand
    */
-  matchComparator(comparator, comparand) {
+  matchComparator (comparator, comparand) {
     var index = this.binarySearch(comparand),
         startIndex = 0,
         endIndex = this.entries.length
@@ -1930,7 +1930,7 @@ lunr.NumberMap = class NumberMap {
    * @param {"*" | number} start
    * @param {"*" | number} end
    */
-  matchRange(start, end) {
+  matchRange (start, end) {
     var startIndex = start == "*" ? 0 : this.binarySearch(start)
     if (startIndex < 0) {
       startIndex = ~startIndex + 1
@@ -1949,7 +1949,7 @@ lunr.NumberMap = class NumberMap {
    * @param {number} startIndex
    * @param {number} endIndex
    */
-  collectTokens(startIndex, endIndex) {
+  collectTokens (startIndex, endIndex) {
     /** @type {string[]} */
     var result = []
     if (startIndex < this.entries.length && endIndex > 0) {
@@ -1959,7 +1959,7 @@ lunr.NumberMap = class NumberMap {
         result = result.concat(this.entries[startIndex++].tokens)
       }
     }
-    return lunr.TokenSet.fromArray(result.sort());
+    return lunr.TokenSet.fromArray(result.sort())
   }
 
   /**
@@ -1967,7 +1967,7 @@ lunr.NumberMap = class NumberMap {
    * @param {number} value
    * @returns {number}
    */
-  binarySearch(value) {
+  binarySearch (value) {
     var l = 0,
         h = this.entries.length - 1
     while (l <= h) {
@@ -1976,11 +1976,9 @@ lunr.NumberMap = class NumberMap {
           r = mv - value
       if (r < 0) {
         l = m + 1
-      }
-      else if (r > 0) {
+      } else if (r > 0) {
         h = m - 1
-      }
-      else {
+      } else {
         return m
       }
     }
@@ -1990,21 +1988,21 @@ lunr.NumberMap = class NumberMap {
   /**
    * @param {lunr.Index.InvertedIndex} invertedIndex
    */
-  static fromInvertedIndex(invertedIndex) {
-    const numbersBuilder = new lunr.NumberMap.Builder();
+  static fromInvertedIndex (invertedIndex) {
+    const numbersBuilder = new lunr.NumberMap.Builder()
     for (const term of Object.keys(invertedIndex)) {
       const posting = invertedIndex[term]
       const number = posting["_number"]
       if (typeof number == "number") {
-        numbersBuilder.add(number, term);
+        numbersBuilder.add(number, term)
       }
     }
-    return numbersBuilder.build();
+    return numbersBuilder.build()
   }
 }
 
 lunr.NumberMap.Builder = class Builder {
-  constructor() {
+  constructor () {
     /** @type {Record<number, lunr.NumberMap.Entry>} */
     this.map = Object.create(null)
   }
@@ -2013,17 +2011,16 @@ lunr.NumberMap.Builder = class Builder {
    * @param {number} value
    * @param {string} token
    */
-  add(value, token) {
+  add (value, token) {
     const entry = this.map[value]
     if (entry) {
       entry.tokens.push(token)
-    }
-    else {
+    } else {
       this.map[value] = { value, tokens: [token] }
     }
   }
 
-  build() {
+  build () {
     return new lunr.NumberMap(Object
       .values(this.map)
       .sort(lunr.NumberMap.Builder.compareEntries))
@@ -2034,7 +2031,7 @@ lunr.NumberMap.Builder = class Builder {
    * @param {lunr.NumberMap.Entry} a
    * @param {lunr.NumberMap.Entry} b
    */
-  static compareEntries(a, b) {
+  static compareEntries (a, b) {
     return a.value - b.value
   }
 }
@@ -2068,14 +2065,14 @@ lunr.Index = class Index {
    * @param {("string" | "number")[]} [attrs.fieldTypes] - The names of indexed document fields.
    * @param {lunr.Pipeline} attrs.pipeline - The pipeline to use for search terms.
    */
-  constructor(attrs) {
+  constructor (attrs) {
     this.invertedIndex = attrs.invertedIndex
     this.fieldVectors = attrs.fieldVectors
     this.tokenSet = attrs.tokenSet
     this.fields = attrs.fields
     this.fieldTypes = attrs.fieldTypes
     this.pipeline = attrs.pipeline
-    this.numberMap = lunr.NumberMap.fromInvertedIndex(this.invertedIndex);
+    this.numberMap = lunr.NumberMap.fromInvertedIndex(this.invertedIndex)
   }
 
   /**
@@ -2091,7 +2088,7 @@ lunr.Index = class Index {
    * @throws {lunr.QueryParseError} If the passed query string cannot be parsed.
    * @returns {lunr.Index.Result[]}
    */
-  search(queryString) {
+  search (queryString) {
     return this.query(function (query) {
       var parser = new lunr.QueryParser(queryString, query)
       parser.parse()
@@ -2114,7 +2111,7 @@ lunr.Index = class Index {
    * @param {lunr.Index.queryBuilder} fn - A function that is used to build the query.
    * @returns {lunr.Index.Result[]}
    */
-  query(fn) {
+  query (fn) {
     // for each query clause
     // * process terms
     // * expand terms from token set
@@ -2158,7 +2155,7 @@ lunr.Index = class Index {
       if (clause.usePipeline && typeof clause.term === "string") {
         terms = this.pipeline.runString(clause.term, {
           fields: clause.fields,
-          fieldTypes: clause.fieldTypes,
+          fieldTypes: clause.fieldTypes
         })
       } else {
         terms = [clause.term]
@@ -2411,7 +2408,7 @@ lunr.Index = class Index {
    *
    * @returns {Object}
    */
-  toJSON() {
+  toJSON () {
     var invertedIndex = Object.keys(this.invertedIndex)
       .sort()
       .map((term) => {
@@ -2439,7 +2436,7 @@ lunr.Index = class Index {
    * @param {Object} serializedIndex - A previously serialized lunr.Index
    * @returns {lunr.Index}
    */
-  static load(serializedIndex) {
+  static load (serializedIndex) {
     var attrs = {},
         fieldVectors = /** @type {Record<String, lunr.Vector>} */({}),
         serializedVectors = serializedIndex.fieldVectors,
@@ -2574,7 +2571,7 @@ lunr.Index = class Index {
  * builder before indexing.
  */
 lunr.Builder = class Builder {
-  constructor() {
+  constructor () {
     /** @type {string} - Internal reference to the document reference field. */
     this._ref = "id"
     /** @type {Record<string, lunr.Builder.Field>} _fields - Internal reference to the document fields to index. */
@@ -2616,7 +2613,7 @@ lunr.Builder = class Builder {
    *
    * @param {string} ref - The name of the reference field in the document.
    */
-  ref(ref) {
+  ref (ref) {
     this._ref = ref
   }
 
@@ -2639,7 +2636,7 @@ lunr.Builder = class Builder {
    * @param {lunr.Builder.FieldType} [attributes.type="string"] - The type of field.
    * @throws {RangeError} fieldName cannot contain unsupported characters '/'
    */
-  field(fieldName, attributes) {
+  field (fieldName, attributes) {
     if (/\//.test(fieldName)) {
       throw new RangeError ("Field '" + fieldName + "' contains illegal character '/'")
     }
@@ -2655,7 +2652,7 @@ lunr.Builder = class Builder {
    *
    * @param {number} number - The value to set for this tuning parameter.
    */
-  b(number) {
+  b (number) {
     if (number < 0) {
       this._b = 0
     } else if (number > 1) {
@@ -2672,7 +2669,7 @@ lunr.Builder = class Builder {
    *
    * @param {number} number - The value to set for this tuning parameter.
    */
-  k1(number) {
+  k1 (number) {
     this._k1 = number
   }
 
@@ -2693,7 +2690,7 @@ lunr.Builder = class Builder {
    * @param {object} attributes - Optional attributes associated with this document.
    * @param {number} [attributes.boost=1] - Boost applied to all terms within this document.
    */
-  add(doc, attributes) {
+  add (doc, attributes) {
     var docRef = doc[this._ref],
         fields = Object.keys(this._fields)
 
@@ -2736,9 +2733,9 @@ lunr.Builder = class Builder {
           var posting = Object.create(null)
           posting["_index"] = this.termIndex
           if (term.metadata.type === "number") {
-            const numeric = parseFloat(term.toString());
+            const numeric = parseFloat(term.toString())
             if (isFinite(numeric)) {
-              posting["_number"] = numeric;
+              posting["_number"] = numeric
             }
           }
           this.termIndex += 1
@@ -2776,7 +2773,7 @@ lunr.Builder = class Builder {
    *
    * @private
    */
-  calculateAverageFieldLengths() {
+  calculateAverageFieldLengths () {
     var fieldRefs = Object.keys(this.fieldLengths),
         numberOfFields = fieldRefs.length,
         accumulator = /** @type {Record<string, number>} */({}),
@@ -2809,7 +2806,7 @@ lunr.Builder = class Builder {
    *
    * @private
    */
-  createFieldVectors() {
+  createFieldVectors () {
     var fieldVectors = /** @type {Record<String, lunr.Vector>} */({}),
         fieldRefs = Object.keys(this.fieldTermFrequencies),
         fieldRefsLength = fieldRefs.length,
@@ -2866,7 +2863,7 @@ lunr.Builder = class Builder {
    *
    * @private
    */
-  createTokenSet() {
+  createTokenSet () {
     this.tokenSet = lunr.TokenSet.fromArray(
       Object.keys(this.invertedIndex).sort()
     )
@@ -2875,7 +2872,7 @@ lunr.Builder = class Builder {
   /**
    * @private
    */
-  createNumberSet() {
+  createNumberSet () {
     this.numberMap = lunr.NumberMap.fromInvertedIndex(this.invertedIndex)
   }
 
@@ -2887,7 +2884,7 @@ lunr.Builder = class Builder {
    *
    * @returns {lunr.Index}
    */
-  build() {
+  build () {
     this.calculateAverageFieldLengths()
     this.createFieldVectors()
     this.createTokenSet()
@@ -2918,7 +2915,7 @@ lunr.Builder = class Builder {
    *
    * @param {Function} fn The plugin to apply.
    */
-  use(fn) {
+  use (fn) {
     var args = Array.prototype.slice.call(arguments, 1)
     args.unshift(this)
     fn.apply(this, args)
@@ -2961,7 +2958,7 @@ lunr.MatchData = class MatchData {
    * @param {string} [field] - The field in which the term was found
    * @param {Record<string, string[]>} [metadata] - The metadata recorded about this term in this field
    */
-  constructor(term, field, metadata) {
+  constructor (term, field, metadata) {
     var clonedMetadata = /** @type {Record<string, string[]>} */(Object.create(null)),
         metadataKeys = Object.keys(metadata || {})
 
@@ -2993,7 +2990,7 @@ lunr.MatchData = class MatchData {
    * @param {lunr.MatchData} otherMatchData - Another instance of match data to merge with this one.
    * @see {@link lunr.Index.Result}
    */
-  combine(otherMatchData) {
+  combine (otherMatchData) {
     var terms = Object.keys(otherMatchData.metadata)
 
     for (var i = 0; i < terms.length; i++) {
@@ -3032,7 +3029,7 @@ lunr.MatchData = class MatchData {
    * @param {string} field - The field in which the term was found
    * @param {object} metadata - The metadata recorded about this term in this field
    */
-  add(term, field, metadata) {
+  add (term, field, metadata) {
     if (!(term in this.metadata)) {
       this.metadata[term] = Object.create(null)
       this.metadata[term][field] = metadata
@@ -3071,7 +3068,7 @@ lunr.Query = class Query {
    * @param {lunr.Builder.FieldType[]} [allFieldTypes] - An array of all field types in a lunr.Index
    * @param {lunr.NumberMap} [numberMap]
    */
-  constructor(allFields, allFieldTypes, numberMap) {
+  constructor (allFields, allFieldTypes, numberMap) {
     /** @type {lunr.Query.Clause[]} - An array of query clauses. */
     this.clauses = []
     /** @type {string[]} - An array of all available fields in a lunr.Index */
@@ -3090,7 +3087,7 @@ lunr.Query = class Query {
    * @see lunr.Query.Clause
    * @returns {lunr.Query}
    */
-  clause(clause) {
+  clause (clause) {
     if (!('fields' in clause)) {
       clause.fields = this.allFields
       clause.fieldTypes = this.allFieldTypes
@@ -3136,7 +3133,7 @@ lunr.Query = class Query {
    *
    * @returns boolean
    */
-  isNegated() {
+  isNegated () {
     for (var i = 0; i < this.clauses.length; i++) {
       if (this.clauses[i].presence != lunr.Query.presence.PROHIBITED) {
         return false
@@ -3172,7 +3169,7 @@ lunr.Query = class Query {
    * @example <caption>using lunr.tokenizer to convert a string to tokens before using them as terms</caption>
    * query.term(lunr.tokenizer("foo bar"))
    */
-  term(term, options) {
+  term (term, options) {
     if (Array.isArray(term)) {
       term.forEach((t) => { this.term(t, lunr.utils.clone(options)) })
       return this
@@ -3288,12 +3285,12 @@ lunr.Query.operator.LESSTHANEQUALS = "<="
  */
 lunr.QueryParseError = class QueryParseError extends Error {
   /**
-   * @param {string} message 
-   * @param {number} start 
-   * @param {number} end 
+   * @param {string} message
+   * @param {number} start
+   * @param {number} end
    */
   constructor (message, start, end) {
-    super(message);
+    super(message)
     this.name = "QueryParseError"
     this.message = message
     this.start = start
@@ -3304,7 +3301,7 @@ lunr.QueryLexer = class QueryLexer {
   /**
    * @param {string} str
    */
-  constructor(str) {
+  constructor (str) {
     /** @type {lunr.QueryLexer.Lexeme[]} */
     this.lexemes = []
     /** @type {string} */
@@ -3319,7 +3316,7 @@ lunr.QueryLexer = class QueryLexer {
     this.escapeCharPositions = []
   }
 
-  run() {
+  run () {
     /** @type {lunr.QueryLexer.lexerState | void} */
     var state = lunr.QueryLexer.lexText
     while (state) {
@@ -3327,7 +3324,7 @@ lunr.QueryLexer = class QueryLexer {
     }
   }
 
-  sliceString() {
+  sliceString () {
     var subSlices = [],
         sliceStart = this.start,
         sliceEnd = this.pos
@@ -3347,7 +3344,7 @@ lunr.QueryLexer = class QueryLexer {
   /**
    * @param {lunr.QueryLexer.LexemeType} type
    */
-  emit(type) {
+  emit (type) {
     this.lexemes.push({
       type: type,
       str: this.sliceString(),
@@ -3358,12 +3355,12 @@ lunr.QueryLexer = class QueryLexer {
     this.start = this.pos
   }
 
-  escapeCharacter() {
+  escapeCharacter () {
     this.escapeCharPositions.push(this.pos - 1)
     this.pos += 1
   }
 
-  next() {
+  next () {
     if (this.pos >= this.length) {
       return lunr.QueryLexer.EOS
     }
@@ -3373,7 +3370,7 @@ lunr.QueryLexer = class QueryLexer {
     return char
   }
 
-  peek() {
+  peek () {
     if (this.pos >= this.length) {
       return lunr.QueryLexer.EOS
     }
@@ -3382,11 +3379,11 @@ lunr.QueryLexer = class QueryLexer {
     return char
   }
 
-  width() {
+  width () {
     return this.pos - this.start
   }
 
-  ignore() {
+  ignore () {
     if (this.start == this.pos) {
       this.pos += 1
     }
@@ -3394,11 +3391,11 @@ lunr.QueryLexer = class QueryLexer {
     this.start = this.pos
   }
 
-  backup() {
+  backup () {
     this.pos -= 1
   }
 
-  acceptDigitRun() {
+  acceptDigitRun () {
     var char, charCode
 
     do {
@@ -3411,7 +3408,7 @@ lunr.QueryLexer = class QueryLexer {
     }
   }
 
-  more() {
+  more () {
     return this.pos < this.length
   }
 }
@@ -3445,17 +3442,17 @@ lunr.QueryLexer.lexField = function (lexer) {
   lexer.emit(lunr.QueryLexer.FIELD)
   lexer.ignore()
 
-  var char = lexer.peek();
+  var char = lexer.peek()
 
   // "<", "<=", ">", and ">=" indicates a relational operator
   if ((char == ">" || char == "<") && lexer.width() === 0) {
-    lexer.next();
-    if (lexer.peek() == "=") lexer.next();
-    lexer.emit(lunr.QueryLexer.COMPARATOR);
+    lexer.next()
+    if (lexer.peek() == "=") lexer.next()
+    lexer.emit(lunr.QueryLexer.COMPARATOR)
     lexer.acceptDigitRun()
     if (lexer.peek() == ".") lexer.next()
-    lexer.acceptDigitRun();
-    lexer.emit(lunr.QueryLexer.COMPARAND);
+    lexer.acceptDigitRun()
+    lexer.emit(lunr.QueryLexer.COMPARAND)
   }
 
   return lunr.QueryLexer.lexText
@@ -3630,7 +3627,7 @@ lunr.QueryLexer.lexText = function (lexer) {
    * @param {string} str
    * @param {lunr.Query} query
    */
-  constructor(str, query) {
+  constructor (str, query) {
     this.lexer = new lunr.QueryLexer (str)
     this.query = query
     /** @type {Partial<lunr.Query.Clause>} */
@@ -3642,7 +3639,7 @@ lunr.QueryLexer.lexText = function (lexer) {
     this.lexemeIdx = 0
   }
 
-  parse() {
+  parse () {
     this.lexer.run()
     /** @type {lunr.QueryLexer.Lexeme[]} */
     this.lexemes = this.lexer.lexemes
@@ -3657,17 +3654,17 @@ lunr.QueryLexer.lexText = function (lexer) {
     return this.query
   }
 
-  peekLexeme() {
+  peekLexeme () {
     return /** @type {lunr.QueryLexer.Lexeme[]} */(this.lexemes)[this.lexemeIdx]
   }
 
-  consumeLexeme() {
+  consumeLexeme () {
     var lexeme = this.peekLexeme()
     this.lexemeIdx += 1
     return lexeme
   }
 
-  nextClause() {
+  nextClause () {
     var completedClause = /** @type {lunr.Query.Clause} */(this.currentClause)
     this.query.clause(completedClause)
     this.currentClause = {}
@@ -3749,7 +3746,7 @@ lunr.QueryParser.parseField = function (parser) {
     return
   }
 
-  var fieldIndex = parser.query.allFields.indexOf(lexeme.str);
+  var fieldIndex = parser.query.allFields.indexOf(lexeme.str)
   if (fieldIndex == -1) {
     var possibleFields = parser.query.allFields.map(function (f) { return "'" + f + "'" }).join(', '),
         errorMessage = "unrecognised field '" + lexeme.str + "', possible fields: " + possibleFields
@@ -3797,8 +3794,7 @@ lunr.QueryParser.parseRangeStart = function (parser) {
         throw new lunr.QueryParseError (errorMessage, lexeme.start, lexeme.end)
       }
     }
-  }
-  else {
+  } else {
     var errorMessage = "ranges are only supported on fields of type 'number'"
     throw new lunr.QueryParseError (errorMessage, lexeme.start, lexeme.end)
   }
@@ -3807,8 +3803,7 @@ lunr.QueryParser.parseRangeStart = function (parser) {
 
   if (lexeme.str == "*") {
     parser.currentRange.start = "*"
-  }
-  else {
+  } else {
     parser.currentRange.start = parseFloat(lexeme.str)
     if (isNaN(parser.currentRange.start)) {
       var errorMessage = "range start must be numeric or '*'"
@@ -3842,12 +3837,11 @@ lunr.QueryParser.parseRangeEnd = function (parser) {
     return
   }
 
-  if (!parser.currentRange) throw new Error();
+  if (!parser.currentRange) throw new Error()
 
   if (lexeme.str == "*") {
     parser.currentRange.end = "*"
-  }
-  else {
+  } else {
     parser.currentRange.end = parseFloat(lexeme.str)
     if (isNaN(parser.currentRange.end)) {
       var errorMessage = "range end must be numeric or '*'"
@@ -3889,14 +3883,13 @@ lunr.QueryParser.parseComparator = function (parser) {
         throw new lunr.QueryParseError (errorMessage, lexeme.start, lexeme.end)
       }
     }
-  }
-  else {
+  } else {
     var errorMessage = "comparators are only supported on fields of type 'number'"
     throw new lunr.QueryParseError (errorMessage, lexeme.start, lexeme.end)
   }
 
   parser.currentComparator = {}
-  parser.currentClause.usePipeline = false;
+  parser.currentClause.usePipeline = false
 
   switch (lexeme.str) {
     case "<":
@@ -3904,10 +3897,10 @@ lunr.QueryParser.parseComparator = function (parser) {
     case ">":
     case ">=":
       parser.currentComparator.comparator = lexeme.str
-      break;
+      break
   }
 
-  var nextLexeme = parser.peekLexeme();
+  var nextLexeme = parser.peekLexeme()
 
   if (nextLexeme == undefined) {
     var errorMessage = "expecting term, found nothing"
