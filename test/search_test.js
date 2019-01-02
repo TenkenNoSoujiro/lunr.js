@@ -138,6 +138,7 @@ suite('search', function () {
         this.ref('id')
         this.field('title')
         this.field('body')
+        this.field('wordCount', { type: "number" })
 
         self.documents.forEach(function (document) {
           this.add(document)
@@ -1094,6 +1095,28 @@ suite('search', function () {
           assertions()
         })
 
+      })
+    })
+
+  //   suite('quoted term', function () {
+  //     suite.only('#search', function () {
+  //       setup(function () {
+  //         this.results = this.idx.search('"plumb water"');
+  //       })
+  //       test('one result found', function () {
+  //         assert.lengthOf(this.results, 1);
+  //       })
+  //     })
+  //   })
+
+    suite('relational term', function () {
+      suite('#search', function () {
+        setup(function () {
+          this.results = this.idx.search('wordCount:>10')
+        })
+        test('one result found', function () {
+          assert.lengthOf(this.results, 1);
+        })
       })
     })
   })

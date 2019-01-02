@@ -13,6 +13,7 @@ SRC = lib/lunr.js \
 	lib/trimmer.js \
 	lib/token_set.js \
 	lib/token_set_builder.js \
+	lib/number_set.js \
 	lib/index.js \
 	lib/builder.js \
 	lib/match_data.js \

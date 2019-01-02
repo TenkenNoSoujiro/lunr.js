@@ -411,6 +411,92 @@ suite('lunr.QueryLexer', function () {
       })
     })
 
+    for (const op of ["<", "<=", ">", ">="]) {
+      suite('term with field and operator ' + op, function () {
+        setup(function () {
+          this.lexer = lex('title:' + op + '10')
+        })
+
+        test('produces 3 lexems', function () {
+          assert.lengthOf(this.lexer.lexemes, 3)
+        })
+
+        suite('lexemes', function () {
+          setup(function () {
+            this.fieldLexeme = this.lexer.lexemes[0]
+            this.operatorLexeme = this.lexer.lexemes[1]
+            this.termLexeme = this.lexer.lexemes[2]
+          })
+
+          test('#type', function () {
+            assert.equal(lunr.QueryLexer.FIELD, this.fieldLexeme.type)
+            assert.equal(lunr.QueryLexer.COMPARATOR, this.operatorLexeme.type)
+            assert.equal(lunr.QueryLexer.COMPARAND, this.termLexeme.type)
+          })
+
+          test('#str', function () {
+            assert.equal('title', this.fieldLexeme.str)
+            assert.equal(op, this.operatorLexeme.str)
+            assert.equal('10', this.termLexeme.str)
+          })
+
+          test('#start', function () {
+            assert.equal(0, this.fieldLexeme.start)
+            assert.equal(6, this.operatorLexeme.start)
+            assert.equal(6 + op.length, this.termLexeme.start)
+          })
+
+          test('#end', function () {
+            assert.equal(5, this.fieldLexeme.end)
+            assert.equal(6 + op.length, this.operatorLexeme.end)
+            assert.equal(8 + op.length, this.termLexeme.end)
+          })
+        })
+      })
+    }
+
+    suite('term with field and range', function () {
+      setup(function () {
+        this.lexer = lex('title:foo..bar')
+      })
+
+      test('produces 3 lexems', function () {
+        assert.lengthOf(this.lexer.lexemes, 3)
+      })
+
+      suite('lexemes', function () {
+        setup(function () {
+          this.fieldLexeme = this.lexer.lexemes[0]
+          this.startLexeme = this.lexer.lexemes[1]
+          this.endLexeme = this.lexer.lexemes[2]
+        })
+
+        test('#type', function () {
+          assert.equal(lunr.QueryLexer.FIELD, this.fieldLexeme.type)
+          assert.equal(lunr.QueryLexer.RANGE_START, this.startLexeme.type)
+          assert.equal(lunr.QueryLexer.RANGE_END, this.endLexeme.type)
+        })
+
+        test('#str', function () {
+          assert.equal('title', this.fieldLexeme.str)
+          assert.equal('foo', this.startLexeme.str)
+          assert.equal('bar', this.endLexeme.str)
+        })
+
+        test('#start', function () {
+          assert.equal(0, this.fieldLexeme.start)
+          assert.equal(6, this.startLexeme.start)
+          assert.equal(11, this.endLexeme.start)
+        })
+
+        test('#end', function () {
+          assert.equal(5, this.fieldLexeme.end)
+          assert.equal(9, this.startLexeme.end)
+          assert.equal(14, this.endLexeme.end)
+        })
+      })
+    })
+
     suite('term with presence prohibited', function () {
       setup(function () {
         this.lexer = lex('-foo')
@@ -568,6 +654,5 @@ suite('lunr.QueryLexer', function () {
         })
       })
     })
-
   })
 })

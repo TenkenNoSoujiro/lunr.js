@@ -1,6 +1,6 @@
 suite('lunr.QueryParser', function () {
   var parse = function (q) {
-    var query = new lunr.Query (['title', 'body']),
+    var query = new lunr.Query (['title', 'body', 'wordCount'], ['string', 'string', 'number']),
         parser = new lunr.QueryParser(q, query)
 
     parser.parse()
@@ -28,7 +28,7 @@ suite('lunr.QueryParser', function () {
         })
 
         test('fields', function () {
-          assert.sameMembers(['title', 'body'], this.clause.fields)
+          assert.sameMembers(['title', 'body', 'wordCount'], this.clause.fields)
         })
 
         test('presence', function () {
@@ -60,7 +60,7 @@ suite('lunr.QueryParser', function () {
         })
 
         test('fields', function () {
-          assert.sameMembers(['title', 'body'], this.clause.fields)
+          assert.sameMembers(['title', 'body', 'wordCount'], this.clause.fields)
         })
 
         test('usePipeline', function () {
@@ -212,6 +212,66 @@ suite('lunr.QueryParser', function () {
       })
     })
 
+    suite('term with field and operator', function () {
+      setup(function () {
+        this.clauses = parse('wordCount:>=10')
+      })
+
+      test('has 1 clause', function () {
+        assert.lengthOf(this.clauses, 1)
+      })
+
+      suite('clauses', function () {
+        setup(function () {
+          this.clause = this.clauses[0]
+        })
+
+        test('term', function () {
+          assert.equal(">=", this.clause.term.comparator)
+          assert.equal(10, this.clause.term.comparand)
+        })
+
+        test('fields', function () {
+          assert.sameMembers(['wordCount'], this.clause.fields)
+        })
+
+        test('presence', function () {
+          assert.equal(lunr.Query.presence.OPTIONAL, this.clause.presence)
+        })
+      })
+    })
+
+    for (const [start, end] of [["*", "*"], ["*", 20], [10, "*"], [10, 20]]) {
+      suite('term with field and range', function () {
+        setup(function () {
+          this.clauses = parse(`wordCount:${start}..${end}`)
+        })
+
+        test('has 1 clause', function () {
+          assert.lengthOf(this.clauses, 1)
+        })
+
+        suite('clauses', function () {
+          setup(function () {
+            this.clause = this.clauses[0]
+          })
+
+          test('term', function () {
+            assert.equal(start, this.clause.term.start)
+            assert.equal(end, this.clause.term.end)
+          })
+
+          test('fields', function () {
+            assert.sameMembers(['wordCount'], this.clause.fields)
+          })
+
+          test('presence', function () {
+            assert.equal(lunr.Query.presence.OPTIONAL, this.clause.presence)
+          })
+        })
+      })
+    }
+
     suite('uppercase field with uppercase term', function () {
       setup(function () {
         // Using a different query to the rest of the tests
@@ -275,7 +335,7 @@ suite('lunr.QueryParser', function () {
       })
 
       test('fields', function () {
-        assert.sameMembers(['title', 'body'], this.clauses[0].fields)
+        assert.sameMembers(['title', 'body', 'wordCount'], this.clauses[0].fields)
       })
     })
 
@@ -299,8 +359,8 @@ suite('lunr.QueryParser', function () {
       })
 
       test('fields', function () {
-        assert.sameMembers(['title', 'body'], this.clauses[0].fields)
-        assert.sameMembers(['title', 'body'], this.clauses[1].fields)
+        assert.sameMembers(['title', 'body', 'wordCount'], this.clauses[0].fields)
+        assert.sameMembers(['title', 'body', 'wordCount'], this.clauses[1].fields)
       })
     })
 
@@ -356,7 +416,7 @@ suite('lunr.QueryParser', function () {
       })
 
       test('fields', function () {
-        assert.sameMembers(['title', 'body'], this.clauses[0].fields)
+        assert.sameMembers(['title', 'body', 'wordCount'], this.clauses[0].fields)
       })
     })
 
@@ -392,8 +452,8 @@ suite('lunr.QueryParser', function () {
       })
 
       test('fields', function () {
-        assert.sameMembers(['title', 'body'], this.clauses[0].fields)
-        assert.sameMembers(['title', 'body'], this.clauses[1].fields)
+        assert.sameMembers(['title', 'body', 'wordCount'], this.clauses[0].fields)
+        assert.sameMembers(['title', 'body', 'wordCount'], this.clauses[1].fields)
       })
     })
 
@@ -437,7 +497,7 @@ suite('lunr.QueryParser', function () {
       })
 
       test('fields', function () {
-        assert.sameMembers(['title', 'body'], this.clauses[0].fields)
+        assert.sameMembers(['title', 'body', 'wordCount'], this.clauses[0].fields)
       })
 
       test('presence', function () {
@@ -463,7 +523,7 @@ suite('lunr.QueryParser', function () {
       })
 
       test('fields', function () {
-        assert.sameMembers(['title', 'body'], this.clauses[0].fields)
+        assert.sameMembers(['title', 'body', 'wordCount'], this.clauses[0].fields)
       })
 
       test('presence', function () {
@@ -546,7 +606,7 @@ suite('lunr.QueryParser', function () {
       })
 
       test('fields', function () {
-        assert.sameMembers(['title', 'body'], this.clauses[0].fields)
+        assert.sameMembers(['title', 'body', 'wordCount'], this.clauses[0].fields)
       })
   })
 })
