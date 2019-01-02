@@ -1991,9 +1991,8 @@ lunr.NumberMap = class NumberMap {
   static fromInvertedIndex (invertedIndex) {
     const numbersBuilder = new lunr.NumberMap.Builder()
     for (const term of Object.keys(invertedIndex)) {
-      const posting = invertedIndex[term]
-      const number = posting["_number"]
-      if (typeof number == "number") {
+      const number = parseFloat(term);
+      if (isFinite(number)) {
         numbersBuilder.add(number, term)
       }
     }
@@ -2469,7 +2468,7 @@ lunr.Index = class Index {
     tokenSetBuilder.finish()
 
     attrs.fields = serializedIndex.fields
-
+    attrs.fieldTypes = serializedIndex.fieldTypes
     attrs.fieldVectors = fieldVectors
     attrs.invertedIndex = invertedIndex
     attrs.tokenSet = tokenSetBuilder.root
@@ -2551,7 +2550,7 @@ lunr.Index = class Index {
 
 /**
  * @typedef {Record<string, lunr.Index.InvertedIndex.Posting>} lunr.Index.InvertedIndex
- * @typedef {{ _index: number, _number?: number } & lunr.Index.InvertedIndex.FieldReference} lunr.Index.InvertedIndex.Posting
+ * @typedef {{ _index: number } & lunr.Index.InvertedIndex.FieldReference} lunr.Index.InvertedIndex.Posting
  * @typedef {Record<string, lunr.Index.InvertedIndex.DocumentReference>} lunr.Index.InvertedIndex.FieldReference
  * @typedef {Record<string, lunr.Index.InvertedIndex.Metadata>} lunr.Index.InvertedIndex.DocumentReference
  * @typedef {Record<string, any[]>} lunr.Index.InvertedIndex.Metadata
@@ -2732,12 +2731,6 @@ lunr.Builder = class Builder {
           /** @type {lunr.Index.InvertedIndex.Posting} */
           var posting = Object.create(null)
           posting["_index"] = this.termIndex
-          if (term.metadata.type === "number") {
-            const numeric = parseFloat(term.toString())
-            if (isFinite(numeric)) {
-              posting["_number"] = numeric
-            }
-          }
           this.termIndex += 1
 
           for (var k = 0; k < fields.length; k++) {

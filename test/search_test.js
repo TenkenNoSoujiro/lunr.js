@@ -1111,11 +1111,17 @@ suite('search', function () {
 
     suite('relational term', function () {
       suite('#search', function () {
-        setup(function () {
-          this.results = this.idx.search('wordCount:>10')
+        test('wordCount:>9', function () {
+          assert.lengthOf(this.idx.search('wordCount:>9'), 2)
         })
-        test('one result found', function () {
-          assert.lengthOf(this.results, 1);
+        test('wordCount:>=9', function () {
+          assert.lengthOf(this.idx.search('wordCount:>=9'), 3)
+        })
+        test('wordCount:<16', function () {
+          assert.lengthOf(this.idx.search('wordCount:<16'), 1)
+        })
+        test('wordCount:<=16', function () {
+          assert.lengthOf(this.idx.search('wordCount:<=16'), 2)
         })
       })
     })
