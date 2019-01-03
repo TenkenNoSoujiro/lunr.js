@@ -1,6 +1,8 @@
 {
+  "parser": "eslint-plugin-typescript/parser",
   "parserOptions": {
-    "ecmaVersion": 2018
+    "ecmaVersion": 2018,
+    "sourceType": "script"
   },
 
   "env": {
@@ -16,7 +18,8 @@
   "extends": "eslint:recommended",
 
   "plugins": [
-    "spellcheck"
+    "spellcheck",
+    "typescript"
   ],
 
   "rules": {
@@ -34,6 +37,13 @@
           "github", "js", "ts", "typeof", "comparand"
         ]
       }
+    ],
+
+    "no-unused-vars": "off",
+    "typescript/no-unused-vars": [
+      "error",
+      { "varsIgnorePattern": "lunr",
+        "argsIgnorePattern": "^_" }
     ],
 
     "no-constant-condition": [

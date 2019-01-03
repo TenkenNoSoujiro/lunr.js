@@ -1,12 +1,40 @@
 {
     "compilerOptions": {
-        "noEmit": true,
+        "noEmitOnError": true,
         "target": "esnext",
+        "module": "none",
         "strict": true,
-        "checkJs": true,
-        "allowJs": true
+        "noImplicitUseStrict": true,
+        "alwaysStrict": false,
+        "composite": true,
+        "declaration": true,
+        "sourceMap": true,
+        "outFile": "obj/lunr-standalone.js",
+        "rootDir": "lib"
     },
-    "include": [
-        "lib/**/*.js"
+    "files": [
+        "lib/lunr.ts",
+        "lib/utils.ts",
+        "lib/field_ref.ts",
+        "lib/set.ts",
+        "lib/idf.ts",
+        "lib/token.ts",
+        "lib/tokenizer.ts",
+        "lib/pipeline.ts",
+        "lib/vector.ts",
+        "lib/stemmer.ts",
+        "lib/stop_word_filter.ts",
+        "lib/trimmer.ts",
+        "lib/token_set.ts",
+        "lib/token_set_builder.ts",
+        "lib/number_map.ts",
+        "lib/number_map_builder.ts",
+        "lib/index.ts",
+        "lib/builder.ts",
+        "lib/match_data.ts",
+        "lib/query.ts",
+        "lib/query_parse_error.ts",
+        "lib/query_lexer.ts",
+        "lib/query_parser.ts"
     ]
 }

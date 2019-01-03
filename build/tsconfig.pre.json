@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "noEmit": true,
+        "declaration": true,
+        "outFile": "wrapper_start.js"
+    },
+    "files": ["empty.ts"]
+}

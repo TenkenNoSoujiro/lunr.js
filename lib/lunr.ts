@@ -28,10 +28,11 @@
  * @see {@link lunr.stopWordFilter}
  * @see {@link lunr.stemmer}
  * @namespace {function} lunr
- * @param {(this: lunr.Builder, builder: lunr.Builder) => void} config
+ * @param {function(this:lunr.Builder, lunr.Builder)} config
  */
-var lunr = function (config) {
-  var builder = new lunr.Builder
+// eslint-disable-next-line func-style
+function lunr (config: (this: lunr.Builder, builder: lunr.Builder) => void) {
+  let builder = new lunr.Builder
 
   builder.pipeline.add(
     lunr.trimmer,
@@ -47,4 +48,6 @@ var lunr = function (config) {
   return builder.build()
 }
 
-lunr.version = "@VERSION"
+namespace lunr {
+  export const version = "@VERSION"
+}

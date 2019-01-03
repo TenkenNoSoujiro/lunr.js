@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "noEmitOnError": true,
+        "target": "esnext",
+        "module": "none",
+        "strict": true,
+        "noImplicitUseStrict": true,
+        "alwaysStrict": false,
+        "outDir": "../obj/docs",
+        "rootDir": "../lib/"
+    },
+    "include": [
+        "../lib/**/*.ts"
+    ]
+}

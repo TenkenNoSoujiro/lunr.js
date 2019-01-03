@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "outFile": "../obj/lunr.js",
+        "declaration": true,
+        "sourceMap": true
+    },
+    "files": ["empty.ts"],
+    "references": [
+        { "path": "tsconfig.pre.json", "prepend": true },
+        { "path": "../tsconfig.json", "prepend": true },
+        { "path": "tsconfig.post.json", "prepend": true },
+    ]
+}
