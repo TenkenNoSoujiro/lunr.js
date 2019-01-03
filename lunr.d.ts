@@ -36,7 +36,7 @@
  * @namespace {function} lunr
  * @param {function(this:lunr.Builder, lunr.Builder)} config
  */
-declare function lunr(config: (this: lunr.Builder, builder: lunr.Builder) => void): lunr.Index;
+declare function lunr<T = object>(config: (this: lunr.Builder<T>, builder: lunr.Builder<T>) => void): lunr.Index;
 declare namespace lunr {
     const version = "2.3.5";
 }
@@ -1050,7 +1050,7 @@ declare namespace lunr {
      *
      * @memberOf lunr
      */
-    class Builder {
+    class Builder<T = object> {
         /**
          * The inverted index maps terms to document fields.
          */
@@ -1146,7 +1146,7 @@ declare namespace lunr {
          * @param {"string" | "number"} [attributes.type="string"] - The type of field.
          * @throws {RangeError} fieldName cannot contain unsupported characters '/'
          */
-        field(fieldName: string, attributes?: Builder.FieldAttributes): void;
+        field(fieldName: string, attributes?: Builder.FieldAttributes<T>): void;
         /**
          * A parameter to tune the amount of field length normalisation that is applied when
          * calculating relevance scores. A value of 0 will completely disable any normalisation
@@ -1181,7 +1181,7 @@ declare namespace lunr {
          * @param {object} attributes - Optional attributes associated with this document.
          * @param {number} [attributes.boost=1] - Boost applied to all terms within this document.
          */
-        add(doc: object, attributes?: Builder.DocumentAttributes): void;
+        add(doc: T, attributes?: Builder.DocumentAttributes): void;
         /**
          * Calculates the average document length for this index
          *
@@ -1237,10 +1237,10 @@ declare namespace lunr {
          * is deeply nested within a document an extractor function can be used to extract
          * the right field for indexing.
          */
-        type fieldExtractor = (doc: object) => string | object | object[] | undefined;
-        interface FieldAttributes {
+        type fieldExtractor<T = object> = (doc: T) => string | object | object[] | undefined;
+        interface FieldAttributes<T = object> {
             boost?: number;
-            extractor?: fieldExtractor;
+            extractor?: fieldExtractor<T>;
             type?: FieldType;
         }
         interface DocumentAttributes {

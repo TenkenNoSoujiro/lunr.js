@@ -31,8 +31,8 @@
  * @param {function(this:lunr.Builder, lunr.Builder)} config
  */
 // eslint-disable-next-line func-style
-function lunr (config: (this: lunr.Builder, builder: lunr.Builder) => void) {
-  let builder = new lunr.Builder
+function lunr<T = object> (config: (this: lunr.Builder<T>, builder: lunr.Builder<T>) => void) {
+  let builder: lunr.Builder<T> = new lunr.Builder
 
   builder.pipeline.add(
     lunr.trimmer,

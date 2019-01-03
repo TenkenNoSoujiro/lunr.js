@@ -16,7 +16,7 @@ namespace lunr {
    *
    * @memberOf lunr
    */
-  export class Builder {
+  export class Builder<T = object> {
     /**
      * The inverted index maps terms to document fields.
      */
@@ -70,7 +70,7 @@ namespace lunr {
     /**
      * Internal reference to the document fields to index.
      */
-    private _fields: Record<string, lunr.Builder.FieldAttributes> = Object.create(null)
+    private _fields: Record<string, lunr.Builder.FieldAttributes<T>> = Object.create(null)
 
     private _documents: Record<string, lunr.Builder.DocumentAttributes> = Object.create(null)
 
@@ -130,7 +130,7 @@ namespace lunr {
      * @param {"string" | "number"} [attributes.type="string"] - The type of field.
      * @throws {RangeError} fieldName cannot contain unsupported characters '/'
      */
-    field (fieldName: string, attributes: Builder.FieldAttributes = {}) {
+    field (fieldName: string, attributes: Builder.FieldAttributes<T> = {}) {
       if (/\//.test(fieldName)) {
         throw new RangeError ("Field '" + fieldName + "' contains illegal character '/'")
       }
@@ -184,7 +184,7 @@ namespace lunr {
      * @param {object} attributes - Optional attributes associated with this document.
      * @param {number} [attributes.boost=1] - Boost applied to all terms within this document.
      */
-    add (doc: object, attributes: Builder.DocumentAttributes = {}) {
+    add (doc: T, attributes: Builder.DocumentAttributes = {}) {
       let docRef = (doc as any)[this._ref],
           fields = Object.keys(this._fields)
 
@@ -408,12 +408,13 @@ namespace lunr {
      * is deeply nested within a document an extractor function can be used to extract
      * the right field for indexing.
      */
-    export type fieldExtractor =
-      (doc: object) => string | object | object[] | undefined
+    // eslint-disable-next-line space-infix-ops
+    export type fieldExtractor<T = object> =
+      (doc: T) => string | object | object[] | undefined
 
-    export interface FieldAttributes {
+    export interface FieldAttributes<T = object> {
       boost?: number
-      extractor?: fieldExtractor
+      extractor?: fieldExtractor<T>
       type?: FieldType
     }
 
