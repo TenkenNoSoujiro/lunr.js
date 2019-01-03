@@ -479,8 +479,20 @@ var lunr;
         }
         if (Array.isArray(obj)) {
             return obj.map(function (t) {
+                if (t instanceof lunr.Token) {
+                    return new lunr.Token(t.str.toLowerCase(), {
+                        ...lunr.utils.clone(t.metadata),
+                        ...lunr.utils.clone(metadata)
+                    });
+                }
                 return new lunr.Token(lunr.utils.asString(t).toLowerCase(), lunr.utils.clone(metadata));
             });
+        }
+        if (obj instanceof lunr.Token) {
+            return [new lunr.Token(obj.str.toLowerCase(), {
+                    ...lunr.utils.clone(obj.metadata),
+                    ...lunr.utils.clone(metadata)
+                })];
         }
         let str = obj.toString().trim().toLowerCase(), len = str.length, tokens = [];
         for (let sliceEnd = 0, sliceStart = 0; sliceEnd <= len; sliceEnd++) {
