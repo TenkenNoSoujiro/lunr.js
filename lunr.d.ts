@@ -103,6 +103,7 @@ declare namespace lunr {
         }
         const binarySearch: <T>(array: T[], value: T, comparer?: (a: T, b: T) => number, step?: number | undefined, bias?: Bias | undefined) => number;
         const binarySearchKey: <T, K>(array: T[], key: K, keySelector: (v: T) => K, comparer: (a: K, b: K) => number, step?: number, bias?: Bias) => number;
+        const parseNumber: (str: string) => number;
     }
 }
 declare namespace lunr {

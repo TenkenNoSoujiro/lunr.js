@@ -71,8 +71,8 @@ namespace lunr {
     static fromInvertedIndex (invertedIndex: lunr.Index.InvertedIndex) {
       const numbersBuilder = new NumberMap.Builder()
       for (const term of Object.keys(invertedIndex)) {
-        const number = parseFloat(term)
-        if (isFinite(number)) {
+        const number = lunr.utils.parseNumber(term)
+        if (!isNaN(number)) {
           numbersBuilder.add(number, term)
         }
       }

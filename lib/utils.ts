@@ -149,5 +149,16 @@ namespace lunr {
         default: return ~(l * step)
       }
     }
+
+    const decimalPattern = /^[+-]?(?:(?:0|[1-9]\d*)(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/
+    const integerPattern = /^[+-]?0(?:[bB][01]+|[oO][0-7]+|[xX][0-9a-fA-F]+)$/
+
+    /* @internal */
+    export const parseNumber = function (str: string) {
+      str = str.trim()
+      return decimalPattern.test(str) ? parseFloat(str) :
+        integerPattern.test(str) ? parseInt(str) :
+          NaN
+    }
   }
 }

@@ -178,7 +178,7 @@ namespace lunr {
     if (lexeme.str == "*") {
       parser.currentRange.start = "*"
     } else {
-      parser.currentRange.start = parseFloat(lexeme.str)
+      parser.currentRange.start = lunr.utils.parseNumber(lexeme.str)
       if (isNaN(parser.currentRange.start)) {
         let errorMessage = "range start must be numeric or '*'"
         throw new lunr.QueryParseError (errorMessage, lexeme.start, lexeme.end)
@@ -216,7 +216,7 @@ namespace lunr {
     if (lexeme.str == "*") {
       parser.currentRange.end = "*"
     } else {
-      parser.currentRange.end = parseFloat(lexeme.str)
+      parser.currentRange.end = lunr.utils.parseNumber(lexeme.str)
       if (isNaN(parser.currentRange.end)) {
         let errorMessage = "range end must be numeric or '*'"
         throw new lunr.QueryParseError (errorMessage, lexeme.start, lexeme.end)
@@ -300,7 +300,7 @@ namespace lunr {
 
     if (!parser.currentComparator) throw new Error()
 
-    parser.currentComparator.comparand = parseFloat(lexeme.str)
+    parser.currentComparator.comparand = lunr.utils.parseNumber(lexeme.str)
     if (isNaN(parser.currentComparator.comparand)) {
       let errorMessage = "comparand must be numeric"
       throw new lunr.QueryParseError (errorMessage, lexeme.start, lexeme.end)

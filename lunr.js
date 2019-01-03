@@ -182,6 +182,15 @@ var lunr;
                 default: return ~(l * step);
             }
         };
+        const decimalPattern = /^[+-]?(?:(?:0|[1-9]\d*)(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/;
+        const integerPattern = /^[+-]?0(?:[bB][01]+|[oO][0-7]+|[xX][0-9a-fA-F]+)$/;
+        /* @internal */
+        utils.parseNumber = function (str) {
+            str = str.trim();
+            return decimalPattern.test(str) ? parseFloat(str) :
+                integerPattern.test(str) ? parseInt(str) :
+                    NaN;
+        };
     })(utils = lunr.utils || (lunr.utils = {}));
 })(lunr || (lunr = {}));
 // @ts-ignore
@@ -1781,8 +1790,8 @@ var lunr;
         static fromInvertedIndex(invertedIndex) {
             const numbersBuilder = new NumberMap.Builder();
             for (const term of Object.keys(invertedIndex)) {
-                const number = parseFloat(term);
-                if (isFinite(number)) {
+                const number = lunr.utils.parseNumber(term);
+                if (!isNaN(number)) {
                     numbersBuilder.add(number, term);
                 }
             }
@@ -3381,7 +3390,7 @@ var lunr;
             parser.currentRange.start = "*";
         }
         else {
-            parser.currentRange.start = parseFloat(lexeme.str);
+            parser.currentRange.start = lunr.utils.parseNumber(lexeme.str);
             if (isNaN(parser.currentRange.start)) {
                 let errorMessage = "range start must be numeric or '*'";
                 throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
@@ -3413,7 +3422,7 @@ var lunr;
             parser.currentRange.end = "*";
         }
         else {
-            parser.currentRange.end = parseFloat(lexeme.str);
+            parser.currentRange.end = lunr.utils.parseNumber(lexeme.str);
             if (isNaN(parser.currentRange.end)) {
                 let errorMessage = "range end must be numeric or '*'";
                 throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
@@ -3483,7 +3492,7 @@ var lunr;
         }
         if (!parser.currentComparator)
             throw new Error();
-        parser.currentComparator.comparand = parseFloat(lexeme.str);
+        parser.currentComparator.comparand = lunr.utils.parseNumber(lexeme.str);
         if (isNaN(parser.currentComparator.comparand)) {
             let errorMessage = "comparand must be numeric";
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
