@@ -68,7 +68,6 @@ UGLIFYJS ?= ./node_modules/.bin/uglifyjs
 MOCHA ?= ./node_modules/.bin/mocha
 MUSTACHE ?= ./node_modules/.bin/mustache
 ESLINT ?= ./node_modules/.bin/eslint
-JSDOC ?= ./node_modules/.bin/jsdoc
 TYPEDOC ?= ./node_modules/.bin/typedoc
 NODE_STATIC ?= ./node_modules/.bin/static
 TSC ?= ./node_modules/.bin/tsc
