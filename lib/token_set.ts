@@ -23,8 +23,6 @@ namespace lunr {
    * Token sets are implemented as a minimal finite state automata,
    * where both common prefixes and suffixes are shared between tokens.
    * This helps to reduce the space used for storing the token set.
-   *
-   * @memberOf lunr
    */
   export class TokenSet {
     /**
@@ -32,8 +30,6 @@ namespace lunr {
      * to a new tokenSet.
      *
      * TokenSets require a unique identifier to be correctly minimised.
-     *
-     * @private
      */
     private static _nextId = 1
 
@@ -41,7 +37,10 @@ namespace lunr {
     edges: Record<string, TokenSet> = {}
     id = TokenSet._nextId++
 
-    /** @internal */
+    /**
+     * @internal
+     * @hidden
+     */
     _str?: string
 
     constructor () {
@@ -50,8 +49,6 @@ namespace lunr {
     /**
      * Converts this TokenSet into an array of strings
      * contained within the TokenSet.
-     *
-     * @returns {string[]}
      */
     toArray (): string[] {
       interface Frame { prefix: string, node: TokenSet }
@@ -97,8 +94,6 @@ namespace lunr {
      * in objects, largely to aid the construction and minimisation
      * of a TokenSet. As such it is not designed to be a human
      * friendly representation of the TokenSet.
-     *
-     * @returns {string}
      */
     toString (): string {
       // NOTE: Using Object.keys here as this.edges is very likely
@@ -134,8 +129,7 @@ namespace lunr {
      * This intersection will take into account any wildcards
      * contained within the TokenSet.
      *
-     * @param {lunr.TokenSet} b An other TokenSet to intersect with.
-     * @returns {lunr.TokenSet}
+     * @param b An other TokenSet to intersect with.
      */
     intersect (b: TokenSet): TokenSet {
       interface Frame { qNode: TokenSet, output: TokenSet, node: TokenSet }
@@ -204,8 +198,7 @@ namespace lunr {
     /**
      * Creates a TokenSet instance from the given sorted array of words.
      *
-     * @param {string[]} arr A sorted array of strings to create the set from.
-     * @returns {lunr.TokenSet}
+     * @param arr A sorted array of strings to create the set from.
      * @throws Will throw an error if the input array is not sorted.
      */
     static fromArray (arr: string[]): TokenSet {
@@ -222,9 +215,7 @@ namespace lunr {
     /**
      * Creates a token set from a query clause.
      *
-     * @private
-     * @param {lunr.Query~Clause} clause A single clause from lunr.Query.
-     * @returns {lunr.TokenSet}
+     * @param clause A single clause from lunr.Query.
      */
     static fromClause (clause: Query.Clause): TokenSet {
       if (typeof clause.term === "object") {
@@ -249,9 +240,8 @@ namespace lunr {
      * on the performance of both creating and intersecting these TokenSets.
      * It is advised to keep the edit distance less than 3.
      *
-     * @param {string} str The string to create the token set from.
-     * @param {number} editDistance The allowed edit distance to match.
-     * @returns {lunr.TokenSet}
+     * @param str The string to create the token set from.
+     * @param editDistance The allowed edit distance to match.
      */
     static fromFuzzyString (str: string, editDistance: number): TokenSet {
       interface Frame { node: TokenSet, editsRemaining: number, str: string }

@@ -5,10 +5,11 @@ namespace lunr {
    * a posting. This is shared between the builder and the index
    *
    * @private
+   * @hidden
    * @param {object} posting - The posting for a given term
    * @param {number} documentCount - The total number of documents.
    */
-  export const idf = function (posting: Index.InvertedIndex.Posting, documentCount: number) {
+  export const idf = function (posting: Index.InvertedIndex[string], documentCount: number) {
     let documentsWithTerm = 0
 
     for (let fieldName in posting) {

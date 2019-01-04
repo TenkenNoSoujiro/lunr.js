@@ -1,5 +1,6 @@
 // @ts-ignore
 namespace lunr {
+  /** @hidden */
   export class QueryParser {
     lexer: lunr.QueryLexer
     query: lunr.Query
@@ -46,8 +47,10 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   type parserState = (parser: QueryParser) => parserState | void
 
+  /** @hidden */
   const parseClause: parserState = parser => {
     let lexeme = parser.peekLexeme()
 
@@ -74,6 +77,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const parsePresence: parserState = parser => {
     let lexeme = parser.consumeLexeme()
 
@@ -113,6 +117,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const parseField: parserState = parser => {
     let lexeme = parser.consumeLexeme()
 
@@ -154,6 +159,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const parseRangeStart: parserState = parser => {
     let lexeme = parser.consumeLexeme()
 
@@ -204,6 +210,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const parseRangeEnd: parserState = parser => {
     let lexeme = parser.consumeLexeme()
 
@@ -243,6 +250,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const parseComparator: parserState = parser => {
     let lexeme = parser.consumeLexeme()
 
@@ -291,6 +299,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const parseComparand: parserState = parser => {
     let lexeme = parser.consumeLexeme()
 
@@ -326,6 +335,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const parseTerm: parserState = parser => {
     let lexeme = parser.consumeLexeme()
 
@@ -367,6 +377,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const parseEditDistance: parserState = parser => {
     let lexeme = parser.consumeLexeme()
 
@@ -411,6 +422,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const parseBoost: parserState = parser => {
     let lexeme = parser.consumeLexeme()
 

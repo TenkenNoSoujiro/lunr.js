@@ -1,5 +1,6 @@
 // @ts-ignore
 namespace lunr {
+  /** @hidden */
   export namespace QueryLexer {
     export type LexemeType =
       | "EOS"
@@ -21,6 +22,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   export class QueryLexer {
     static readonly EOS = "EOS"
     static readonly FIELD = "FIELD"
@@ -154,8 +156,10 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   type lexerState = (lexer: QueryLexer) => lexerState | void
 
+  /** @hidden */
   const lexField: lexerState = lexer => {
     lexer.backup()
     lexer.emit(QueryLexer.FIELD)
@@ -177,6 +181,7 @@ namespace lunr {
     return lexText
   }
 
+  /** @hidden */
   const lexRange: lexerState = lexer => {
     lexer.backup()
     if (lexer.width() > 0) {
@@ -214,6 +219,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const lexTerm: lexerState = lexer => {
     if (lexer.width() > 1) {
       lexer.backup()
@@ -227,6 +233,7 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
   const lexEditDistance: lexerState = lexer => {
     lexer.ignore()
     lexer.acceptDigitRun()
@@ -234,6 +241,7 @@ namespace lunr {
     return lexText
   }
 
+  /** @hidden */
   const lexBoost: lexerState = lexer => {
     lexer.ignore()
     lexer.acceptDigitRun()
@@ -241,12 +249,14 @@ namespace lunr {
     return lexText
   }
 
+  /** @hidden */
   const lexEOS: lexerState = lexer => {
     if (lexer.width() > 0) {
       lexer.emit(QueryLexer.TERM)
     }
   }
 
+  /** @hidden */
   const lexText: lexerState = lexer => {
     while (true) {
       var char = lexer.next()

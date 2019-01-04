@@ -6,22 +6,26 @@ namespace lunr {
    *
    * Prefer constructing a lunr.Query using the {@link lunr.Index#query} method
    * so the query object is pre-initialized with the right index fields.
-   *
-   * @memberOf lunr
    */
   export class Query {
-    /** An array of query clauses. */
+    /**
+     * An array of query clauses.
+     */
     clauses: Query.Clause[] = []
-    /** An array of all available fields in a lunr.Index */
+    /**
+     * An array of all available fields in a lunr.Index
+     */
     allFields: string[]
-    /** An array of all field types in a lunr.Index */
+    /**
+     * An array of all field types in a lunr.Index
+     */
     allFieldTypes?: Builder.FieldType[]
     numberMap?: NumberMap
 
     /**
-     * @param {string[]} allFields An array of all available fields in a lunr.Index
-     * @param {Array<"string" | "number">} [allFieldTypes] An array of all field types in a lunr.Index
-     * @param {lunr.NumberMap} [numberMap]
+     * @param allFields An array of all available fields in a lunr.Index
+     * @param allFieldTypes An array of all field types in a lunr.Index
+     * @param numberMap
      */
     constructor (allFields: string[], allFieldTypes?: Builder.FieldType[], numberMap?: NumberMap) {
       this.clauses = []
@@ -31,13 +35,13 @@ namespace lunr {
     }
 
     /**
-     * Adds a {@link lunr.Query~Clause} to this query.
+     * Adds a {@link lunr.Query.Clause} to this query.
      *
      * Unless the clause contains the fields to be matched all fields will be matched. In addition
      * a default boost of 1 is applied to the clause.
      *
-     * @param {lunr.Query~Clause} clause The clause to add to this query.
-     * @see lunr.Query~Clause
+     * @param clause The clause to add to this query.
+     * @see [Query.Clause]
      */
     clause (clause: Query.Clause) {
       if (!('fields' in clause)) {
@@ -98,8 +102,6 @@ namespace lunr {
      * A negated query is one in which every clause has a presence of
      * prohibited. These queries require some special processing to return
      * the expected results.
-     *
-     * @returns boolean
      */
     isNegated () {
       for (var i = 0; i < this.clauses.length; i++) {
@@ -112,7 +114,7 @@ namespace lunr {
     }
 
     /**
-     * Adds a term to the current query, under the covers this will create a {@link lunr.Query~Clause}
+     * Adds a term to the current query, under the covers this will create a {@link lunr.Query.Clause}
      * to the list of clauses that make up this query.
      *
      * The term is used as is, i.e. no tokenization will be performed by this method. Instead conversion
@@ -121,11 +123,10 @@ namespace lunr {
      * The term will be converted to a string by calling `toString`. Multiple terms can be passed as an
      * array, each term in the array will share the same options.
      *
-     * @param {object|object[]} term The term(s) to add to the query.
-     * @param {object} [options] Any additional properties to add to the query clause.
-     * @returns {lunr.Query}
+     * @param term The term(s) to add to the query.
+     * @param options Any additional properties to add to the query clause.
      * @see lunr.Query#clause
-     * @see lunr.Query~Clause
+     * @see lunr.Query.Clause
      * @example <caption>adding a single term to a query</caption>
      * query.term("foo")
      * @example <caption>adding a single term to a query and specifying search fields, term boost and automatic trailing wildcard</caption>
@@ -152,15 +153,15 @@ namespace lunr {
     }
 
     /**
-     * Adds a comparator term to the current query, under the covers this will create a {@link lunr.Query~Clause}
+     * Adds a comparator term to the current query, under the covers this will create a {@link lunr.Query.Clause}
      * to the list of clauses that make up this query.
      *
-     * @param {lunr.Query.comparator} comparator The relational operator.
-     * @param {number} comparand The comparand.
-     * @param {object} [options] Any additional properties to add to the query clause.
+     * @param comparator The relational operator.
+     * @param comparand The comparand.
+     * @param options Any additional properties to add to the query clause.
      * @returns {lunr.Query}
      * @see lunr.Query#clause
-     * @see lunr.Query~Clause
+     * @see lunr.Query.Clause
      * @example <caption>adding a single comparator to a query and specifying search fields</caption>
      * query.comparator(lunr.Query.comparator.GREATERTHAN, 10, {
      *   fields: ["wordCount"]
@@ -176,15 +177,14 @@ namespace lunr {
     }
 
     /**
-     * Adds a range term to the current query, under the covers this will create a {@link lunr.Query~Clause}
+     * Adds a range term to the current query, under the covers this will create a {@link lunr.Query.Clause}
      * to the list of clauses that make up this query.
      *
-     * @param {"*" | number} start The starting point of the range.
-     * @param {"*" | number} end The ending point of the range.
-     * @param {object} [options] Any additional properties to add to the query clause.
-     * @returns {lunr.Query}
+     * @param start The starting point of the range.
+     * @param end The ending point of the range.
+     * @param options Any additional properties to add to the query clause.
      * @see lunr.Query#clause
-     * @see lunr.Query~Clause
+     * @see lunr.Query.Clause
      * @example <caption>adding a single comparator to a query and specifying search fields</caption>
      * query.range(5, 10, {
      *   fields: ["wordCount"]
@@ -211,14 +211,7 @@ namespace lunr {
      *
      * The wildcard constants can be bitwise combined to select both leading and trailing wildcards.
      *
-     * @constant
-     * @static
-     * @memberOf lunr.Query
-     * @enum {number}
-     * @property {number} wildcard.NONE - The term will have no wildcards inserted, this is the default behaviour
-     * @property {number} wildcard.LEADING - Prepend the term with a wildcard, unless a leading wildcard already exists
-     * @property {number} wildcard.TRAILING - Append a wildcard to the term, unless a trailing wildcard already exists
-     * @see lunr.Query~Clause
+     * @see lunr.Query.Clause
      * @see lunr.Query#clause
      * @see lunr.Query#term
      * @example <caption>query term with trailing wildcard</caption>
@@ -240,16 +233,7 @@ namespace lunr {
     /**
      * Constants for indicating what kind of presence a term must have in matching documents.
      *
-     * @constant
-     * @static
-     * @memberOf lunr.Query
-     * @enum {number}
-     * @property {number} OPTIONAL - Term's presence in a document is optional, this is the default value.
-     * @property {number} REQUIRED - Term's presence in a document is required, documents that do not contain
-     * this term will not be returned.
-     * @property {number} PROHIBITED - Term's presence in a document is prohibited, documents that do contain
-     * this term will not be returned.
-     * @see lunr.Query~Clause
+     * @see lunr.Query.Clause
      * @see lunr.Query#clause
      * @see lunr.Query#term
      * @example <caption>query term with required presence</caption>
@@ -277,15 +261,7 @@ namespace lunr {
     /**
      * Constants for indicating a relational comparison.
      *
-     * @constant
-     * @static
-     * @memberOf lunr.Query
-     * @enum {string}
-     * @property {string} GREATERTHAN - The field's value must be greater than (`>`) the comparand.
-     * @property {string} GREATERTHAN_EQUALS - The field's value must be greater than or equal to (`>=`) the comparand.
-     * @property {string} LESSTHAN - The field's value must be less than (`<`) the comparand.
-     * @property {string} LESSTHAN_EQUALS - The field's value must be less than or equal to (`<=`) the comparand.
-     * @see lunr.Query~Clause
+     * @see lunr.Query.Clause
      * @see lunr.Query#clause
      * @see lunr.Query#term
      */
@@ -305,31 +281,49 @@ namespace lunr {
      * match that term against a {@link lunr.Index}.
      */
     export interface Clause {
-      /** The fields in an index this clause should be matched against. */
+      /**
+       * The fields in an index this clause should be matched against.
+       */
       fields?: string[]
-      /** The types of the fields in the index. */
+      /**
+       * The types of the fields in the index.
+       */
       fieldTypes?: Builder.FieldType[]
       numberMap?: NumberMap
-      /** Any boost that should be applied when matching this clause. */
+      /**
+       * Any boost that should be applied when matching this clause.
+       */
       boost?: number
-      /** Whether the term should have fuzzy matching applied, and how fuzzy the match should be. */
+      /**
+       * Whether the term should have fuzzy matching applied, and how fuzzy the match should be.
+       */
       editDistance?: number
-      /** Whether the term should be passed through the search pipeline. */
+      /**
+       * Whether the term should be passed through the search pipeline.
+       */
       usePipeline?: boolean
-      /** Whether the term should have wildcards appended or prepended. */
+      /**
+       * Whether the term should have wildcards appended or prepended.
+       */
       wildcard?: wildcard
-      /** The terms presence in any matching documents. */
+      /**
+       * The terms presence in any matching documents.
+       */
       presence?: presence
       term: Term
     }
 
-    /** A term used to compare a number against a field using the provided operator. */
+    /**
+     * A term used to compare a number against a field using the provided operator.
+     */
     export interface ComparatorTerm {
       comparator: comparator
       comparand: number
     }
 
-    /** A term used to find a number within the provided range. */
+    /**
+     * A term used to find a number within the provided range.
+     */
     export interface RangeTerm {
       start: "*" | number
       end: "*" | number
@@ -338,41 +332,3 @@ namespace lunr {
     export type Term = string | ComparatorTerm | RangeTerm
   }
 }
-
-/**
- * A single clause in a {@link lunr.Query} contains a term and details on how to
- * match that term against a {@link lunr.Index}.
- *
- * @typedef lunr.Query~Clause
- * @property {string[]} fields - The fields in an index this clause should be matched against.
- * @property {Array<"string" | "number">} [fieldTypes]
- * @property {lunr.NumberMap} [numberMap]
- * @property {number} [boost=1] - Any boost that should be applied when matching this clause.
- * @property {number} [editDistance] - Whether the term should have fuzzy matching applied, and how fuzzy the match should be.
- * @property {boolean} [usePipeline] - Whether the term should be passed through the search pipeline.
- * @property {number} [wildcard=lunr.Query.wildcard.NONE] - Whether the term should have wildcards appended or prepended.
- * @property {number} [presence=lunr.Query.presence.OPTIONAL] - The terms presence in any matching documents.
- * @property {lunr.Query~Term} term - The term for the clause.
- */
-
-/**
- * A term used to compare a number against a field using the provided operator.
- *
- * @typedef lunr.Query~ComparatorTerm
- * @property {lunr.Query.comparator} comparator - The relational operator used for comparisons.
- * @property {number} comparand - The value to compare against.
- */
-
-/**
- * A term used to find a number within the provided range.
- *
- * @typedef lunr.Query~RangeTerm
- * @property {"*" | number} start - The start of the range. A value of `"*"` indicates the start is unbounded.
- * @property {"*" | number} end - The end of the range. A value of `"*"` indicates the end is unbounded.
- */
-
-/**
- * The term for a {@link lunr.Query~Clause}.
- *
- * @typedef {string | lunr.Query~ComparatorTerm | lunr.Query~RangeTerm} lunr.Query~Term
- */

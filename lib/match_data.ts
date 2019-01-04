@@ -5,17 +5,18 @@ namespace lunr {
    * A single instance of lunr.MatchData is returned as part of every
    * lunr.Index.Result.
    *
-   * @memberOf lunr
-   * @property {Object<string, string[]>} metadata - A cloned collection of metadata associated with this document.
    * @see {@link lunr.Index~Result}
    */
   export class MatchData {
+    /**
+     * A cloned collection of metadata associated with this document.
+     */
     metadata: Record<string, Record<string, Record<string, string[]>>>
 
     /**
-     * @param {string} [term] - The term this match data is associated with
-     * @param {string} [field] - The field in which the term was found
-     * @param {Object<string, string[]>} [metadata] - The metadata recorded about this term in this field
+     * @param term The term this match data is associated with
+     * @param field The field in which the term was found
+     * @param metadata The metadata recorded about this term in this field
      */
     constructor (term?: string, field?: string, metadata: Record<string, string[]> = {}) {
       let clonedMetadata: Record<string, string[]> = Object.create(null),
@@ -44,8 +45,8 @@ namespace lunr {
      * method combines metadata from another instance of lunr.MatchData with this
      * objects metadata.
      *
-     * @param {lunr.MatchData} otherMatchData - Another instance of match data to merge with this one.
-     * @see {@link lunr.Index~Result}
+     * @param otherMatchData Another instance of match data to merge with this one.
+     * @see {@link lunr.Index.Result}
      */
     combine (otherMatchData: MatchData) {
       let terms = Object.keys(otherMatchData.metadata)
@@ -78,9 +79,9 @@ namespace lunr {
     /**
      * Add metadata for a term/field pair to this instance of match data.
      *
-     * @param {string} term - The term this match data is associated with
-     * @param {string} field - The field in which the term was found
-     * @param {Object<string, string>} metadata - The metadata recorded about this term in this field
+     * @param term - The term this match data is associated with
+     * @param field - The field in which the term was found
+     * @param metadata - The metadata recorded about this term in this field
      */
     add (term: string, field: string, metadata: Record<string, string[]>) {
       if (!(term in this.metadata)) {

@@ -1,0 +1,10 @@
+{
+	"readme": "README.md",
+  "out": "docs",
+	"name": "lunr",
+  "entryPoint": "lunr",
+  "tsconfig": "./tsconfig.json",
+  "mode": "file",
+  "excludePrivate": true,
+  "ignoreCompilerErrors": true
+}

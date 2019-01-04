@@ -52,13 +52,11 @@ namespace lunr {
    *
    * If not planning on serialising the pipeline then registering pipeline functions
    * is not necessary.
-   *
-   * @memberOf lunr
    */
   export class Pipeline {
     static readonly registeredFunctions: Record<string, lunr.PipelineFunction> = Object.create(null)
 
-    _stack: lunr.PipelineFunction[]
+    private _stack: __PipelineFunction[]
 
     constructor () {
       this._stack = []
@@ -73,26 +71,26 @@ namespace lunr {
      * Registering a function does not add it to a pipeline, functions must still be
      * added to instances of the pipeline for them to be used when running a pipeline.
      *
-     * @param {lunr.PipelineFunction} fn The function to check for.
-     * @param {string} label The label to register this function with
+     * @param fn The function to check for.
+     * @param label The label to register this function with
      */
     static registerFunction (fn: lunr.PipelineFunction, label: string) {
       if (label in this.registeredFunctions) {
         lunr.utils.warn('Overwriting existing registered function: ' + label)
       }
 
-      fn.label = label
-      Pipeline.registeredFunctions[fn.label] = fn
+      (fn as __PipelineFunction).label = label
+      Pipeline.registeredFunctions[label] = fn
     }
 
     /**
      * Warns if the function is not registered as a Pipeline function.
      *
-     * @private
-     * @param {lunr.PipelineFunction} fn The function to check for.
+     * @param fn The function to check for.
      */
-    static warnIfFunctionNotRegistered (fn: lunr.PipelineFunction) {
-      let isRegistered = fn.label && (fn.label in this.registeredFunctions)
+    private static warnIfFunctionNotRegistered (fn: lunr.PipelineFunction) {
+      const label = (fn as __PipelineFunction).label;
+      let isRegistered = label && (label in this.registeredFunctions)
 
       if (!isRegistered) {
         lunr.utils.warn('Function is not registered with pipeline. This may cause problems when serialising the index.\n', fn)
@@ -106,8 +104,7 @@ namespace lunr {
      * If any function from the serialised data has not been registered then an
      * error will be thrown.
      *
-     * @param {string[]} serialised - The serialised pipeline to load.
-     * @returns {lunr.Pipeline}
+     * @param serialised - The serialised pipeline to load.
      */
     static load (serialised: string[]): lunr.Pipeline {
       let pipeline = new lunr.Pipeline
@@ -130,7 +127,7 @@ namespace lunr {
      *
      * Logs a warning if the function has not been registered.
      *
-     * @param {...lunr.PipelineFunction} functions Any number of functions to add to the pipeline.
+     * @param functions Any number of functions to add to the pipeline.
      */
     add (...functions: lunr.PipelineFunction[]) {
       functions.forEach((fn) => {
@@ -145,8 +142,8 @@ namespace lunr {
      *
      * Logs a warning if the function has not been registered.
      *
-     * @param {lunr.PipelineFunction} existingFn A function that already exists in the pipeline.
-     * @param {lunr.PipelineFunction} newFn The new function to add to the pipeline.
+     * @param existingFn A function that already exists in the pipeline.
+     * @param newFn The new function to add to the pipeline.
      */
     after (existingFn: lunr.PipelineFunction, newFn: lunr.PipelineFunction) {
       Pipeline.warnIfFunctionNotRegistered(newFn)
@@ -166,8 +163,8 @@ namespace lunr {
      *
      * Logs a warning if the function has not been registered.
      *
-     * @param {lunr.PipelineFunction} existingFn A function that already exists in the pipeline.
-     * @param {lunr.PipelineFunction} newFn The new function to add to the pipeline.
+     * @param existingFn A function that already exists in the pipeline.
+     * @param newFn The new function to add to the pipeline.
      */
     before (existingFn: lunr.PipelineFunction, newFn: lunr.PipelineFunction) {
       Pipeline.warnIfFunctionNotRegistered(newFn)
@@ -183,7 +180,7 @@ namespace lunr {
     /**
      * Removes a function from the pipeline.
      *
-     * @param {lunr.PipelineFunction} fn The function to remove from the pipeline.
+     * @param fn The function to remove from the pipeline.
      */
     remove (fn: lunr.PipelineFunction) {
       let pos = this._stack.indexOf(fn)
@@ -198,7 +195,7 @@ namespace lunr {
      * Runs the current list of functions that make up the pipeline against the
      * passed tokens.
      *
-     * @param {lunr.Token[]} tokens The tokens to run through the pipeline.
+     * @param tokens The tokens to run through the pipeline.
      */
     run (tokens: lunr.Token[]): lunr.Token[] {
       for (const fn of this._stack) {
@@ -230,8 +227,8 @@ namespace lunr {
      * strings out. This method takes care of wrapping the passed string in a
      * token and mapping the resulting tokens back to strings.
      *
-     * @param {string} str The string to pass through the pipeline.
-     * @param {Object<string, *>} metadata Optional metadata to associate with the token
+     * @param str The string to pass through the pipeline.
+     * @param metadata Optional metadata to associate with the token
      * passed to the pipeline.
      */
     runString (str: string, metadata?: Record<string, any>) {
@@ -264,6 +261,9 @@ namespace lunr {
     }
   }
 
+  /** @hidden */
+  type __PipelineFunction = PipelineFunction & { label?: string }
+
   /**
    * A pipeline function maps lunr.Token to lunr.Token. A lunr.Token contains the token
    * string as well as all known metadata. A pipeline function can mutate the token string
@@ -277,14 +277,10 @@ namespace lunr {
    * to any downstream pipeline functions and all will returned tokens will be added to the index.
    *
    * Any number of pipeline functions may be chained together using a lunr.Pipeline.
+   * 
+   * @param token A token from the document being processed.
+   * @param i The index of this token in the complete list of tokens for this document/field.
+   * @param tokens All tokens for this document/field.
    */
-  export interface PipelineFunction {
-    /**
-     * @param token A token from the document being processed.
-     * @param i The index of this token in the complete list of tokens for this document/field.
-     * @param tokens All tokens for this document/field.
-     */
-    (token: lunr.Token, i: number, tokens: lunr.Token[]): lunr.Token | lunr.Token[] | undefined
-    label?: string
-  }
+  export type PipelineFunction = (token: lunr.Token, i: number, tokens: lunr.Token[]) => lunr.Token | lunr.Token[] | undefined
 }

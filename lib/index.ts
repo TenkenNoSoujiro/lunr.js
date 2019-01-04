@@ -6,100 +6,39 @@
 // @ts-ignore
 namespace lunr {
   /**
-   * A query builder callback provides a query object to be used to express
-   * the query to perform on the index.
-   *
-   * @callback lunr.Index~queryBuilder
-   * @param {lunr.Query} query - The query object to build up.
-   * @this lunr.Query
-   */
-
-  /**
-   * A result contains details of a document matching a search query.
-   * @typedef {object} lunr.Index~Result
-   * @property {string} ref - The reference of the document this result represents.
-   * @property {number} score - A number between 0 and 1 representing how similar this document is to the query.
-   * @property {lunr.MatchData} matchData - Contains metadata about this match including which term(s) caused the match.
-   */
-
-  /**
-   * Although lunr provides the ability to create queries using lunr.Query, it also provides a simple
-   * query language which itself is parsed into an instance of lunr.Query.
-   *
-   * For programmatically building queries it is advised to directly use lunr.Query, the query language
-   * is best used for human entered text rather than program generated text.
-   *
-   * At its simplest queries can just be a single term, e.g. `hello`, multiple terms are also supported
-   * and will be combined with OR, e.g `hello world` will match documents that contain either 'hello'
-   * or 'world', though those that contain both will rank higher in the results.
-   *
-   * Wildcards can be included in terms to match one or more unspecified characters, these wildcards can
-   * be inserted anywhere within the term, and more than one wildcard can exist in a single term. Adding
-   * wildcards will increase the number of documents that will be found but can also have a negative
-   * impact on query performance, especially with wildcards at the beginning of a term.
-   *
-   * Terms can be restricted to specific fields, e.g. `title:hello`, only documents with the term
-   * hello in the title field will match this query. Using a field not present in the index will lead
-   * to an error being thrown.
-   *
-   * Modifiers can also be added to terms, lunr supports edit distance and boost modifiers on terms. A term
-   * boost will make documents matching that term score higher, e.g. `foo^5`. Edit distance is also supported
-   * to provide fuzzy matching, e.g. 'hello~2' will match documents with hello with an edit distance of 2.
-   * Avoid large values for edit distance to improve query performance.
-   *
-   * Each term also supports a presence modifier. By default a term's presence in document is optional, however
-   * this can be changed to either required or prohibited. For a term's presence to be required in a document the
-   * term should be prefixed with a '+', e.g. `+foo bar` is a search for documents that must contain 'foo' and
-   * optionally contain 'bar'. Conversely a leading '-' sets the terms presence to prohibited, i.e. it must not
-   * appear in a document, e.g. `-foo bar` is a search for documents that do not contain 'foo' but may contain 'bar'.
-   *
-   * To escape special characters the backslash character '\' can be used, this allows searches to include
-   * characters that would normally be considered modifiers, e.g. `foo\~2` will search for a term "foo~2" instead
-   * of attempting to apply a boost of 2 to the search term "foo".
-   *
-   * @typedef {string} lunr.Index~QueryString
-   * @example <caption>Simple single term query</caption>
-   * hello
-   * @example <caption>Multiple term query</caption>
-   * hello world
-   * @example <caption>term scoped to a field</caption>
-   * title:hello
-   * @example <caption>term with a boost of 10</caption>
-   * hello^10
-   * @example <caption>term with an edit distance of 2</caption>
-   * hello~2
-   * @example <caption>terms with presence modifiers</caption>
-   * -foo +bar baz
-   */
-
-  /**
    * An index contains the built index of all documents and provides a query interface
    * to the index.
    *
    * Usually instances of lunr.Index will not be created using this constructor, instead
    * lunr.Builder should be used to construct new indexes, or lunr.Index.load should be
    * used to load previously built and serialized indexes.
-   *
-   * @memberOf lunr
    */
   export class Index {
+    /**
+     * An index of term/field to document reference.
+     */
     invertedIndex: Index.InvertedIndex
+    /**
+     * Field vectors
+     */
     fieldVectors: Record<string, lunr.Vector>
+    /**
+     * The set of all corpus tokens.
+     */
     tokenSet: lunr.TokenSet
     numberMap: lunr.NumberMap
+    /**
+     * The names of indexed document fields.
+     */
     fields: string[]
     fieldTypes: lunr.Builder.FieldType[]
+    /**
+     * The pipeline to use for search terms.
+     */
     pipeline: lunr.Pipeline
 
     /**
-     * @param {object} attrs - The attributes of the built search index.
-     * @param {object} attrs.invertedIndex - An index of term/field to document reference.
-     * @param {object<string, lunr.Vector>} attrs.fieldVectors - Field vectors
-     * @param {lunr.TokenSet} attrs.tokenSet - An set of all corpus tokens.
-     * @param {lunr.NumberMap} attrs.numberMap
-     * @param {string[]} attrs.fields - The names of indexed document fields.
-     * @param {Array<"string" | "number">} attrs.fieldTypes
-     * @param {lunr.Pipeline} attrs.pipeline - The pipeline to use for search terms.
+     * @param attrs The attributes of the built search index.
     */
     constructor (attrs: Index.IndexAttributes) {
       this.invertedIndex = attrs.invertedIndex
@@ -120,9 +59,8 @@ namespace lunr {
      *
      * For more programmatic querying use lunr.Index#query.
      *
-     * @param {lunr.Index~QueryString} queryString - A string containing a lunr query.
+     * @param queryString - A string containing a lunr query.
      * @throws {lunr.QueryParseError} If the passed query string cannot be parsed.
-     * @returns {lunr.Index.Result[]}
      */
     search (queryString: Index.QueryString) {
       return this.query(query => {
@@ -144,8 +82,7 @@ namespace lunr {
      * asynchronous operation, the callback is just yielded a query object to be
      * customized.
      *
-     * @param {lunr.Index~queryBuilder} fn - A function that is used to build the query.
-     * @returns {lunr.Index~Result[]}
+     * @param fn - A function that is used to build the query.
      */
     query (fn: Index.queryBuilder) {
       // for each query clause
@@ -431,8 +368,6 @@ namespace lunr {
      *
      * The schema for this JSON blob will be described in a
      * separate JSON schema file.
-     *
-     * @returns {Object}
      */
     toJSON (): any {
       let invertedIndex = Object.keys(this.invertedIndex)
@@ -459,8 +394,7 @@ namespace lunr {
     /**
      * Loads a previously serialized lunr.Index
      *
-     * @param {Object} serializedIndex - A previously serialized lunr.Index
-     * @returns {lunr.Index}
+     * @param serializedIndex - A previously serialized lunr.Index
      */
     static load (serializedIndex: any) {
       let fieldVectors: Record<string, lunr.Vector> = {},
@@ -506,20 +440,34 @@ namespace lunr {
   }
 
   export namespace Index {
-    /** The attributes of the built search index. */
+    /**
+     * The attributes of the built search index.
+     */
     export interface IndexAttributes {
-      /** An index of term/field to document reference. */
+      /**
+       * An index of term/field to document reference.
+       */
       invertedIndex: Index.InvertedIndex
-      /** Field vectors */
+      /**
+       * Field vectors
+       */
       fieldVectors: Record<string, lunr.Vector>
-      /** An set of all corpus tokens. */
+      /**
+       * An set of all corpus tokens.
+       */
       tokenSet: lunr.TokenSet
       numberMap: lunr.NumberMap
-      /** The names of indexed document fields. */
+      /**
+       * The names of indexed document fields.
+       */
       fields: string[]
-      /** The names of indexed document fields. */
+      /**
+       * The names of indexed document fields.
+       */
       fieldTypes: lunr.Builder.FieldType[]
-      /** The pipeline to use for search terms. */
+      /**
+       * The pipeline to use for search terms.
+       */
       pipeline: lunr.Pipeline
     }
 
@@ -527,22 +475,25 @@ namespace lunr {
      * A query builder callback provides a query object to be used to express
      * the query to perform on the index.
      *
-     * @callback lunr.Index.queryBuilder
-     * @param {lunr.Query} query - The query object to build up.
-     * @this lunr.Query
+     * @param query - The query object to build up.
      */
     export type queryBuilder = (this: lunr.Query, query: lunr.Query) => void
 
     /**
      * A result contains details of a document matching a search query.
-     * @typedef {object} lunr.Index.Result
-     * @property {string} ref - The reference of the document this result represents.
-     * @property {number} score - A number between 0 and 1 representing how similar this document is to the query.
-     * @property {lunr.MatchData} matchData - Contains metadata about this match including which term(s) caused the match.
      */
     export interface Result {
+      /**
+       * The reference of the document this result represents.
+       */
       ref: string
+      /**
+       * A number between `0` and `1` representing how similar this document is to the query.
+       */
       score: number
+      /**
+       * Contains metadata about this match including which term(s) caused the match.
+       */
       matchData: lunr.MatchData
     }
 
@@ -581,7 +532,6 @@ namespace lunr {
      * characters that would normally be considered modifiers, e.g. `foo\~2` will search for a term "foo~2" instead
      * of attempting to apply a boost of 2 to the search term "foo".
      *
-     * @typedef {string} lunr.Index.QueryString
      * @example <caption>Simple single term query</caption>
      * hello
      * @example <caption>Multiple term query</caption>
@@ -597,13 +547,9 @@ namespace lunr {
      */
     export type QueryString = string
 
-    export type InvertedIndex = Record<string, InvertedIndex.Posting>
-
-    export namespace InvertedIndex {
-      export type Posting = { _index: number } & FieldReference
-      export type FieldReference = Record<string, DocumentReference>
-      export type DocumentReference = Record<string, Metadata>
-      export type Metadata = Record<string, any>
-    }
+    /**
+     * The shape of the inverted index for an [[Index]].
+     */
+    export type InvertedIndex = Record<string, { _index: number } & Record<string, Record<string, Record<string, any>>>>
   }
 }

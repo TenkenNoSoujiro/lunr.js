@@ -11,12 +11,7 @@ namespace lunr {
    * lunr.stemmer is an english language stemmer, this is a JavaScript
    * implementation of the PorterStemmer taken from http://tartarus.org/~martin
    *
-   * @static
-   * @implements {lunr.PipelineFunction}
-   * @param {lunr.Token} token - The string to stem
-   * @returns {lunr.Token}
    * @see {@link lunr.Pipeline}
-   * @function
    */
   export const stemmer: PipelineFunction = (function () {
     let step2list: Record<string, string> = {

@@ -12,8 +12,7 @@ namespace lunr {
    * The built in lunr.stopWordFilter is built using this generator and can be used
    * to generate custom stopWordFilters for applications or non English languages.
    *
-   * @param {string[]} stopWords The token to pass through the filter
-   * @returns {lunr.PipelineFunction}
+   * @param stopWords The token to pass through the filter
    * @see lunr.Pipeline
    * @see lunr.stopWordFilter
    */
@@ -35,14 +34,9 @@ namespace lunr {
    * This is intended to be used in the Pipeline. If the token does not pass the
    * filter then undefined will be returned.
    *
-   * @static
-   * @implements {lunr.PipelineFunction}
-   * @param {lunr.Token} token - A token to check for being a stop word.
-   * @returns {lunr.Token}
    * @see {@link lunr.Pipeline}
-   * @function
    */
-  export const stopWordFilter = generateStopWordFilter([
+  export const stopWordFilter: lunr.PipelineFunction = generateStopWordFilter([
     'a',
     'able',
     'about',

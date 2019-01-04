@@ -17,8 +17,6 @@ namespace lunr {
    * index is immediately followed by its value. E.g. [index, value, index, value]. This
    * allows the underlying array to be as sparse as possible and still offer decent
    * performance when being used for vector calculations.
-   *
-   * @memberOf lunr
    */
   export class Vector {
     elements: number[]

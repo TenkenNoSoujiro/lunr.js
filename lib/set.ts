@@ -7,19 +7,18 @@
 namespace lunr {
   // These sentinel values exist purely for the purposes of static initialization of `Set.complete`
   // and `Set.empty`
+  /** @hidden */
   let completeSentinel: string[] | undefined
+  /** @hidden */
   let emptySentinel: string[] | undefined
   completeSentinel = emptySentinel = []
 
   /**
    * A lunr set.
-   *
-   * @memberOf lunr
    */
   export class Set {
     /**
      * A complete set that contains all elements.
-     * @type {lunr.Set}
      */
     static readonly complete: Set = new class CompleteSet extends Set {
       constructor () {
@@ -40,7 +39,6 @@ namespace lunr {
 
     /**
      * An empty set that contains no elements.
-     * @type {lunr.Set}
      */
     static readonly empty: Set = new class EmptySet extends Set {
       constructor () {

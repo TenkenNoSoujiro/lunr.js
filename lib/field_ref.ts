@@ -1,5 +1,6 @@
 // @ts-ignore
 namespace lunr {
+  /** @hidden */
   export class FieldRef {
     static readonly joiner = "/"
 

@@ -1,8 +1,5 @@
 // @ts-ignore
 namespace lunr {
-  /**
-   * @memberOf lunr
-   */
   export class NumberMap {
     entries: NumberMap.Entry[]
 

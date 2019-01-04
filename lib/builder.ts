@@ -6,15 +6,13 @@
 // @ts-ignore
 namespace lunr {
   /**
-   * lunr.Builder performs indexing on a set of documents and
-   * returns instances of lunr.Index ready for querying.
+   * {@link Builder} performs indexing on a set of documents and
+   * returns instances of {@link Index} ready for querying.
    *
    * All configuration of the index is done via the builder, the
    * fields to index, the document reference, the text processing
    * pipeline and document scoring parameters are all set on the
    * builder before indexing.
-   *
-   * @memberOf lunr
    */
   export class Builder<T = object> {
     /**
@@ -105,7 +103,7 @@ namespace lunr {
      * The ref should _not_ be changed during indexing, it should be set before any documents are
      * added to the index. Changing it during indexing can lead to inconsistent results.
      *
-     * @param {string} ref - The name of the reference field in the document.
+     * @param ref - The name of the reference field in the document.
      */
     ref (ref: string) {
       this._ref = ref
@@ -123,11 +121,8 @@ namespace lunr {
      * importance when ranking search results. Use a field boost to specify that matches within
      * one field are more important than other fields.
      *
-     * @param {string} fieldName - The name of a field to index in all documents.
-     * @param {object} attributes - Optional attributes associated with this field.
-     * @param {number} [attributes.boost=1] - Boost applied to all terms within this field.
-     * @param {lunr.Builder~fieldExtractor} [attributes.extractor] - Function to extract a field from a document.
-     * @param {"string" | "number"} [attributes.type="string"] - The type of field.
+     * @param fieldName - The name of a field to index in all documents.
+     * @param attributes - Optional attributes associated with this field.
      * @throws {RangeError} fieldName cannot contain unsupported characters '/'
      */
     field (fieldName: string, attributes: Builder.FieldAttributes<T> = {}) {
@@ -144,7 +139,7 @@ namespace lunr {
      * and a value of 1 will fully normalise field lengths. The default is 0.75. Values of b
      * will be clamped to the range 0 - 1.
      *
-     * @param {number} number - The value to set for this tuning parameter.
+     * @param number - The value to set for this tuning parameter.
      */
     b (number: number) {
       if (number < 0) {
@@ -161,7 +156,7 @@ namespace lunr {
      * frequency saturation. The default value is 1.2. Setting this to a higher value will give
      * slower saturation levels, a lower value will result in quicker saturation.
      *
-     * @param {number} number - The value to set for this tuning parameter.
+     * @param number - The value to set for this tuning parameter.
      */
     k1 (number: number) {
       this._k1 = number
@@ -180,9 +175,8 @@ namespace lunr {
      * Entire documents can be boosted at build time. Applying a boost to a document indicates that
      * this document should rank higher in search results than other documents.
      *
-     * @param {object} doc - The document to add to the index.
-     * @param {object} attributes - Optional attributes associated with this document.
-     * @param {number} [attributes.boost=1] - Boost applied to all terms within this document.
+     * @param doc - The document to add to the index.
+     * @param attributes - Optional attributes associated with this document.
      */
     add (doc: T, attributes: Builder.DocumentAttributes = {}) {
       let docRef = (doc as any)[this._ref],
@@ -220,7 +214,7 @@ namespace lunr {
           // add to inverted index
           // create an initial posting if one doesn't exist
           if (this.invertedIndex["" + term] == undefined) {
-            let posting: Index.InvertedIndex.Posting = Object.create(null)
+            let posting: Index.InvertedIndex[string] = Object.create(null)
             posting["_index"] = this.termIndex
             this.termIndex += 1
 
@@ -254,8 +248,6 @@ namespace lunr {
 
     /**
      * Calculates the average document length for this index
-     *
-     * @private
      */
     private calculateAverageFieldLengths () {
       let fieldRefs = Object.keys(this.fieldLengths),
@@ -283,9 +275,7 @@ namespace lunr {
     }
 
     /**
-     * Builds a vector space model of every document using lunr.Vector
-     *
-     * @private
+     * Builds a vector space model of every document using [[Vector]]
      */
     private createFieldVectors (averageFieldLength: Record<string, number>) {
       let fieldVectors: Record<string, lunr.Vector> = {},
@@ -339,9 +329,7 @@ namespace lunr {
     }
 
     /**
-     * Creates a token set of all tokens in the index using lunr.TokenSet
-     *
-     * @private
+     * Creates a token set of all tokens in the index using [[TokenSet]]
      */
     private createTokenSet () {
       return lunr.TokenSet.fromArray(
@@ -349,20 +337,15 @@ namespace lunr {
       )
     }
 
-    /**
-     * @private
-     */
     private createNumberMap () {
       return lunr.NumberMap.fromInvertedIndex(this.invertedIndex)
     }
 
     /**
-     * Builds the index, creating an instance of lunr.Index.
+     * Builds the index, creating an instance of [[Index]].
      *
      * This completes the indexing process and should only be called
      * once all documents have been added to the index.
-     *
-     * @returns {lunr.Index}
      */
     build () {
       this.averageFieldLength = this.calculateAverageFieldLengths()
@@ -393,7 +376,11 @@ namespace lunr {
      * arguments can also be passed when calling use. The function will be called
      * with the index builder as its context.
      *
-     * @param {Function} fn The plugin to apply.
+     * @param fn The plugin to apply.
+     * @param fn.this This builder.
+     * @param fn.builder This builder.
+     * @param fn.args The arguments passed to `use`.
+     * @param args The arguments to pass to `fn`.
      */
     use <A extends any[]> (fn: (this: Builder, builder: Builder, ...args: A) => void, ...args: A): void {
       fn.call(this, this, ...args)
@@ -407,35 +394,37 @@ namespace lunr {
      * Lunr expects a field to be at the top level of a document, if however the field
      * is deeply nested within a document an extractor function can be used to extract
      * the right field for indexing.
+     *
+     * @example <caption>Extracting a nested field</caption>
+     * function (doc) { return doc.nested.field }
      */
     // eslint-disable-next-line space-infix-ops
     export type fieldExtractor<T = object> =
+      /**
+       * @param doc The document being added to the index.
+       * @returns The object that will be indexed for this field.
+       */
       (doc: T) => string | object | object[] | undefined
 
+    /**
+     * The attributes for a field.
+     */
     export interface FieldAttributes<T = object> {
       boost?: number
       extractor?: fieldExtractor<T>
       type?: FieldType
     }
 
+    /**
+     * The attributes for a document.
+     */
     export interface DocumentAttributes {
       boost?: number
     }
 
+    /**
+     * The valid types for a field in the index.
+     */
     export type FieldType = "string" | "number"
   }
 }
-
-/**
- * A function that is used to extract a field from a document.
- *
- * Lunr expects a field to be at the top level of a document, if however the field
- * is deeply nested within a document an extractor function can be used to extract
- * the right field for indexing.
- *
- * @callback lunr.Builder~fieldExtractor
- * @param {object} doc - The document being added to the index.
- * @returns {?(string|object|object[])} obj - The object that will be indexed for this field.
- * @example <caption>Extracting a nested field</caption>
- * function (doc) { return doc.nested.field }
- */

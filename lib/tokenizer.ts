@@ -7,19 +7,18 @@
 namespace lunr {
   /**
    * A function for splitting a string into tokens ready to be inserted into
-   * the search index. Uses `lunr.tokenizer.separator` to split strings, change
+   * the search index. Uses [[lunr.tokenizer.separator]] to split strings, change
    * the value of this property to change how strings are split into tokens.
    *
    * This tokenizer will convert its parameter to a string by calling `toString` and
-   * then will split this string on the character in `lunr.tokenizer.separator`.
+   * then will split this string on the character in [[lunr.tokenizer.separator]].
    * Arrays will have their elements converted to strings and wrapped in a lunr.Token.
    *
    * Optional metadata can be passed to the tokenizer, this metadata will be cloned and
    * added as metadata to every token that is created from the object to be tokenized.
    *
-   * @param {string|object|object[]} [obj] The object to convert into tokens
-   * @param {Object<string,*>} [metadata] Optional metadata to associate with every token
-   * @returns {string[]}
+   * @param obj The object to convert into tokens
+   * @param metadata Optional metadata to associate with every token
    * @see {@link lunr.Pipeline}
    */
   export const tokenizer = function (obj: string | object | object[] | undefined, metadata: Record<string, any>): lunr.Token[] {
@@ -82,7 +81,7 @@ namespace lunr {
 
   /**
    * The separator used to split a string into tokens. Override this property to change the behaviour of
-   * `lunr.tokenizer` behaviour when tokenizing strings. By default this splits on whitespace and hyphens.
+   * [[lunr.tokenizer]] when tokenizing strings. By default this splits on whitespace and hyphens.
    *
    * @see {@link lunr.tokenizer}
    */

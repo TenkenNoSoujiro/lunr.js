@@ -21,14 +21,11 @@
  *     this.add(doc)
  *   }, this)
  * })
- *
  * @see {@link lunr.Builder}
  * @see {@link lunr.Pipeline}
  * @see {@link lunr.trimmer}
  * @see {@link lunr.stopWordFilter}
  * @see {@link lunr.stemmer}
- * @namespace {function} lunr
- * @param {function(this:lunr.Builder, lunr.Builder)} config
  */
 // eslint-disable-next-line func-style
 function lunr<T = object> (config: (this: lunr.Builder<T>, builder: lunr.Builder<T>) => void) {
@@ -49,5 +46,6 @@ function lunr<T = object> (config: (this: lunr.Builder<T>, builder: lunr.Builder
 }
 
 namespace lunr {
+  /** @hidden */
   export const version = "@VERSION"
 }

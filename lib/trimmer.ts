@@ -14,10 +14,7 @@ namespace lunr {
    * characters and should either be removed or adapted for use
    * with languages with non-latin characters.
    *
-   * @static
-   * @implements {lunr.PipelineFunction}
-   * @param {lunr.Token} token The token to pass through the filter
-   * @returns {lunr.Token}
+   * @param token The token to pass through the filter
    * @see lunr.Pipeline
    */
   export const trimmer = function (token: lunr.Token) {

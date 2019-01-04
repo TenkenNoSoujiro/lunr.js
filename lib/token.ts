@@ -3,18 +3,20 @@ namespace lunr {
   /**
    * A token wraps a string representation of a token
    * as it is passed through the text processing pipeline.
-   *
-   * @memberOf lunr
-   * @property {string} str The string token being wrapped.
-   * @property {Object<string, any>} metadata Metadata associated with this token.
    */
   export class Token {
+    /**
+     * The string token being wrapped.
+     */
     str: string
+    /**
+     * Metadata associated with this token.
+     */
     metadata: Record<string, any>
 
     /**
-     * @param {string} [str] The string token being wrapped.
-     * @param {Object<string, any>} [metadata] Metadata associated with this token.
+     * @param str The string token being wrapped.
+     * @param metadata Metadata associated with this token.
      */
     constructor (str: string = "", metadata: Record<string, any> = {}) {
       this.str = str
@@ -37,8 +39,7 @@ namespace lunr {
      *   return str.toUpperCase()
      * })
      *
-     * @param {lunr.Token~updateFunction} fn A function to apply to the token string.
-     * @returns {lunr.Token}
+     * @param fn A function to apply to the token string.
      */
     update (fn: Token.updateFunction): Token {
       this.str = fn(this.str, this.metadata)
@@ -49,8 +50,7 @@ namespace lunr {
      * Creates a clone of this token. Optionally a function can be
      * applied to the cloned token.
      *
-     * @param {lunr.Token~updateFunction} fn - An optional function to apply to the cloned token.
-     * @returns {lunr.Token}
+     * @param fn - An optional function to apply to the cloned token.
      */
     clone (fn: Token.updateFunction = s => s): Token {
       return new Token (fn(this.str, this.metadata), this.metadata)
@@ -61,22 +61,10 @@ namespace lunr {
     /**
      * A token update function is used when updating or optionally
      * when cloning a token.
+     * 
+     * @param str The string representation of the token.
+     * @param metadata All metadata associated with this token.
      */
-    export type updateFunction =
-      /**
-       * @param str The string representation of the token.
-       * @param metadata All metadata associated with this token.
-       */
-      (str: string, metadata: Record<string, any>) => string
+    export type updateFunction = (str: string, metadata: Record<string, any>) => string
   }
 }
-
-/**
- * A token update function is used when updating or optionally
- * when cloning a token.
- *
- * @callback lunr.Token~updateFunction
- * @param {string} str The string representation of the token.
- * @param {Object<string, any>} metadata All metadata associated with this token.
- * @returns {string}
- */

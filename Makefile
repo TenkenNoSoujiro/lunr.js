@@ -69,6 +69,7 @@ MOCHA ?= ./node_modules/.bin/mocha
 MUSTACHE ?= ./node_modules/.bin/mustache
 ESLINT ?= ./node_modules/.bin/eslint
 JSDOC ?= ./node_modules/.bin/jsdoc
+TYPEDOC ?= ./node_modules/.bin/typedoc
 NODE_STATIC ?= ./node_modules/.bin/static
 TSC ?= ./node_modules/.bin/tsc
 
@@ -130,8 +131,8 @@ test/env/file_list.json: $(wildcard test/*test.js)
 test/index.html: test/env/file_list.json test/env/index.mustache
 	${MUSTACHE} $^ > $@
 
-docs: tsc/docs
-	${JSDOC} -R README.md -d docs -c build/jsdoc.conf.json $(DOC_SRC)
+docs: $(SRC)
+	${TYPEDOC} --options ./build/typedoc.json --plugin $(shell pwd)/build/typedoc-plugins
 
 clean:
 	rm -f lunr{.min,}{.js,.js.map,.d.ts}

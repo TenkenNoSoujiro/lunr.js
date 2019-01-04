@@ -10,6 +10,7 @@
         "declaration": true,
         "sourceMap": true,
         "outFile": "obj/lunr-standalone.js",
+        "strictBindCallApply": false,
         "rootDir": "lib"
     },
     "files": [
