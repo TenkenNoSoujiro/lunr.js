@@ -6,7 +6,7 @@
   "keywords": [
     "search"
   ],
-  "homepage": "http://lunrjs.com",
+  "homepage": "https://lunrjs.com",
   "bugs": "http://github.com/olivernn/lunr.js/issues",
   "main": "lunr.js",
   "types": "lunr.d.ts",
