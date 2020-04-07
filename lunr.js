@@ -1,6 +1,6 @@
 /**
  * lunr - http://lunrjs.com - A bit like Solr, but much smaller and not as bright - 2.3.5
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  * @license MIT
  */
 
@@ -51,7 +51,7 @@ function lunr(config) {
 })(lunr || (lunr = {}));
 /*!
  * lunr.utils
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 /**
  * A namespace containing utils for the rest of the lunr library
@@ -225,7 +225,7 @@ var lunr;
 })(lunr || (lunr = {}));
 /*!
  * Set
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 // @ts-ignore
 var lunr;
@@ -451,7 +451,7 @@ var lunr;
  */
 /*!
  * lunr.tokenizer
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 // @ts-ignore
 var lunr;
@@ -519,7 +519,7 @@ var lunr;
 })(lunr || (lunr = {}));
 /*!
  * lunr.Pipeline
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 // @ts-ignore
 var lunr;
@@ -757,7 +757,7 @@ var lunr;
 })(lunr || (lunr = {}));
 /*!
  * lunr.Vector
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 // @ts-ignore
 var lunr;
@@ -910,7 +910,7 @@ var lunr;
 /* eslint-disable */
 /*!
  * lunr.stemmer
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  * Includes code from - http://tartarus.org/~martin/PorterStemmer/js.txt
  */
 // @ts-ignore
@@ -1108,7 +1108,7 @@ var lunr;
 })(lunr || (lunr = {}));
 /*!
  * lunr.stopWordFilter
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 // @ts-ignore
 var lunr;
@@ -1274,7 +1274,7 @@ var lunr;
 })(lunr || (lunr = {}));
 /*!
  * lunr.trimmer
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 // @ts-ignore
 var lunr;
@@ -1303,7 +1303,7 @@ var lunr;
 })(lunr || (lunr = {}));
 /*!
  * TokenSet
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 // @ts-ignore
 var lunr;
@@ -1528,38 +1528,45 @@ var lunr;
                         str: frame.str.slice(1)
                     });
                 }
+                if (frame.editsRemaining == 0) {
+                    continue;
+                }
+                // insertion
+                let insertionNode;
+                if ("*" in frame.node.edges) {
+                    insertionNode = frame.node.edges["*"];
+                }
+                else {
+                    insertionNode = new TokenSet;
+                    frame.node.edges["*"] = insertionNode;
+                }
+                if (frame.str.length == 0) {
+                    insertionNode.final = true;
+                }
+                stack.push({
+                    node: insertionNode,
+                    editsRemaining: frame.editsRemaining - 1,
+                    str: frame.str
+                });
                 // deletion
                 // can only do a deletion if we have enough edits remaining
                 // and if there are characters left to delete in the string
-                if (frame.editsRemaining > 0 && frame.str.length > 1) {
-                    let char = frame.str.charAt(1), deletionNode;
-                    if (char in frame.node.edges) {
-                        deletionNode = frame.node.edges[char];
-                    }
-                    else {
-                        deletionNode = new TokenSet;
-                        frame.node.edges[char] = deletionNode;
-                    }
-                    if (frame.str.length <= 2) {
-                        deletionNode.final = true;
-                    }
-                    else {
-                        stack.push({
-                            node: deletionNode,
-                            editsRemaining: frame.editsRemaining - 1,
-                            str: frame.str.slice(2)
-                        });
-                    }
+                if (frame.str.length > 1) {
+                    stack.push({
+                        node: frame.node,
+                        editsRemaining: frame.editsRemaining - 1,
+                        str: frame.str.slice(1)
+                    });
                 }
                 // deletion
                 // just removing the last character from the str
-                if (frame.editsRemaining > 0 && frame.str.length == 1) {
+                if (frame.str.length == 1) {
                     frame.node.final = true;
                 }
                 // substitution
                 // can only do a substitution if we have enough edits remaining
                 // and if there are characters left to substitute
-                if (frame.editsRemaining > 0 && frame.str.length >= 1) {
+                if (frame.str.length >= 1) {
                     let substitutionNode;
                     if ("*" in frame.node.edges) {
                         substitutionNode = frame.node.edges["*"];
@@ -1571,40 +1578,16 @@ var lunr;
                     if (frame.str.length == 1) {
                         substitutionNode.final = true;
                     }
-                    else {
-                        stack.push({
-                            node: substitutionNode,
-                            editsRemaining: frame.editsRemaining - 1,
-                            str: frame.str.slice(1)
-                        });
-                    }
-                }
-                // insertion
-                // can only do insertion if there are edits remaining
-                if (frame.editsRemaining > 0) {
-                    let insertionNode;
-                    if ("*" in frame.node.edges) {
-                        insertionNode = frame.node.edges["*"];
-                    }
-                    else {
-                        insertionNode = new TokenSet;
-                        frame.node.edges["*"] = insertionNode;
-                    }
-                    if (frame.str.length == 0) {
-                        insertionNode.final = true;
-                    }
-                    else {
-                        stack.push({
-                            node: insertionNode,
-                            editsRemaining: frame.editsRemaining - 1,
-                            str: frame.str
-                        });
-                    }
+                    stack.push({
+                        node: substitutionNode,
+                        editsRemaining: frame.editsRemaining - 1,
+                        str: frame.str.slice(1)
+                    });
                 }
                 // transposition
                 // can only do a transposition if there are edits remaining
                 // and there are enough characters to transpose
-                if (frame.editsRemaining > 0 && frame.str.length > 1) {
+                if (frame.str.length > 1) {
                     let charA = frame.str.charAt(0), charB = frame.str.charAt(1), transposeNode;
                     if (charB in frame.node.edges) {
                         transposeNode = frame.node.edges[charB];
@@ -1616,13 +1599,11 @@ var lunr;
                     if (frame.str.length == 1) {
                         transposeNode.final = true;
                     }
-                    else {
-                        stack.push({
-                            node: transposeNode,
-                            editsRemaining: frame.editsRemaining - 1,
-                            str: charA + frame.str.slice(2)
-                        });
-                    }
+                    stack.push({
+                        node: transposeNode,
+                        editsRemaining: frame.editsRemaining - 1,
+                        str: charA + frame.str.slice(2)
+                    });
                 }
             }
             return root;
@@ -1845,7 +1826,7 @@ var lunr;
 })(lunr || (lunr = {}));
 /*!
  * lunr.Index
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 // @ts-ignore
 var lunr;
@@ -2265,7 +2246,7 @@ var lunr;
 })(lunr || (lunr = {}));
 /*!
  * lunr.Builder
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 // @ts-ignore
 var lunr;

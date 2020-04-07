@@ -1,6 +1,6 @@
 /**
  * lunr - http://lunrjs.com - A bit like Solr, but much smaller and not as bright - 2.3.5
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  * @license MIT
  */
 
@@ -42,7 +42,7 @@ declare namespace lunr {
 }
 /*!
  * lunr.utils
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 /**
  * A namespace containing utils for the rest of the lunr library
@@ -122,7 +122,7 @@ declare namespace lunr {
 }
 /*!
  * Set
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 declare namespace lunr {
     /**
@@ -249,7 +249,7 @@ declare namespace lunr {
  */
 /*!
  * lunr.tokenizer
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 declare namespace lunr {
     /**
@@ -282,7 +282,7 @@ declare namespace lunr {
 }
 /*!
  * lunr.Pipeline
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 declare namespace lunr {
     /**
@@ -458,7 +458,7 @@ declare namespace lunr {
 }
 /*!
  * lunr.Vector
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 declare namespace lunr {
     /**
@@ -550,7 +550,7 @@ declare namespace lunr {
 }
 /*!
  * lunr.stemmer
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  * Includes code from - http://tartarus.org/~martin/PorterStemmer/js.txt
  */
 declare namespace lunr {
@@ -569,7 +569,7 @@ declare namespace lunr {
 }
 /*!
  * lunr.stopWordFilter
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 declare namespace lunr {
     /**
@@ -603,7 +603,7 @@ declare namespace lunr {
 }
 /*!
  * lunr.trimmer
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 declare namespace lunr {
     /**
@@ -625,7 +625,7 @@ declare namespace lunr {
 }
 /*!
  * TokenSet
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 declare namespace lunr {
     /**
@@ -783,7 +783,7 @@ declare namespace lunr.NumberMap {
 }
 /*!
  * lunr.Index
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 declare namespace lunr {
     /**
@@ -1036,7 +1036,7 @@ declare namespace lunr {
 }
 /*!
  * lunr.Builder
- * Copyright (C) 2019 Oliver Nightingale
+ * Copyright (C) 2020 Oliver Nightingale
  */
 declare namespace lunr {
     /**
