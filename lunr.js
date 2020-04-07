@@ -494,7 +494,7 @@ var lunr;
                     ...lunr.utils.clone(metadata)
                 })];
         }
-        let str = obj.toString().trim().toLowerCase(), len = str.length, tokens = [];
+        let str = obj.toString().toLowerCase(), len = str.length, tokens = [];
         for (let sliceEnd = 0, sliceStart = 0; sliceEnd <= len; sliceEnd++) {
             let char = str.charAt(sliceEnd), sliceLength = sliceEnd - sliceStart;
             if ((char.match(lunr.tokenizer.separator) || sliceEnd == len)) {
@@ -1338,6 +1338,10 @@ var lunr;
         /**
          * Converts this TokenSet into an array of strings
          * contained within the TokenSet.
+         *
+         * This is not intended to be used on a TokenSet that
+         * contains wildcards, in these cases the results are
+         * undefined and are likely to cause an infinite loop.
          *
          * @returns {string[]}
          */

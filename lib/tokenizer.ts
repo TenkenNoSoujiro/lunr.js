@@ -49,7 +49,7 @@ namespace lunr {
       })]
     }
 
-    let str = obj.toString().trim().toLowerCase(),
+    let str = obj.toString().toLowerCase(),
         len = str.length,
         tokens = []
 
