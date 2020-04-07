@@ -51,6 +51,10 @@ namespace lunr {
      * Converts this TokenSet into an array of strings
      * contained within the TokenSet.
      *
+     * This is not intended to be used on a TokenSet that
+     * contains wildcards, in these cases the results are
+     * undefined and are likely to cause an infinite loop.
+     *
      * @returns {string[]}
      */
     toArray (): string[] {
