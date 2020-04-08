@@ -1,5 +1,6 @@
 
-SRC = lib/lunr.ts \
+SRC = lib/global.d.ts \
+	lib/lunr.ts \
 	lib/utils.ts \
 	lib/field_ref.ts \
 	lib/set.ts \

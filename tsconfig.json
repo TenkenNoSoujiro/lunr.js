@@ -13,6 +13,7 @@
         "rootDir": "lib"
     },
     "files": [
+        "lib/global.d.ts",
         "lib/lunr.ts",
         "lib/utils.ts",
         "lib/field_ref.ts",

@@ -395,7 +395,8 @@ namespace lunr {
      *
      * @param {Function} fn The plugin to apply.
      */
-    use <A extends any[]> (fn: (this: Builder, builder: Builder, ...args: A) => void, ...args: A): void {
+    use <A extends any[]> (fn: (this: this, builder: this, ...args: A) => void, ...args: A): void {
+      fn.bind(this, this)(...args);
       fn.call(this, this, ...args)
     }
   }

@@ -11,8 +11,8 @@ namespace lunr {
    * or mutate (or add) metadata for a given token.
    *
    * A pipeline function can indicate that the passed token should be discarded by returning
-   * null. This token will not be passed to any downstream pipeline functions and will not be
-   * added to the index.
+   * null, undefined, or an empty string. This token will not be passed to any downstream pipeline 
+   * functions and will not be added to the index.
    *
    * Multiple tokens can be returned by returning an array of tokens. Each token will be passed
    * to any downstream pipeline functions and all will returned tokens will be added to the index.
@@ -207,8 +207,7 @@ namespace lunr {
         for (let j = 0; j < tokens.length; j++) {
           let result = fn(tokens[j], j, tokens)
 
-          // @ts-ignore
-          if (result === void 0 || result === '') continue
+          if (result === null || result === void 0 || result === '') continue
 
           if (Array.isArray(result)) {
             for (let k = 0; k < result.length; k++) {
@@ -270,8 +269,8 @@ namespace lunr {
    * or mutate (or add) metadata for a given token.
    *
    * A pipeline function can indicate that the passed token should be discarded by returning
-   * null. This token will not be passed to any downstream pipeline functions and will not be
-   * added to the index.
+   * null, undefined, or an empty string. This token will not be passed to any downstream pipeline 
+   * functions and will not be added to the index.
    *
    * Multiple tokens can be returned by returning an array of tokens. Each token will be passed
    * to any downstream pipeline functions and all will returned tokens will be added to the index.
@@ -284,7 +283,7 @@ namespace lunr {
      * @param i The index of this token in the complete list of tokens for this document/field.
      * @param tokens All tokens for this document/field.
      */
-    (token: lunr.Token, i: number, tokens: lunr.Token[]): lunr.Token | lunr.Token[] | undefined
+    (token: lunr.Token, i: number, tokens: lunr.Token[]): lunr.Token | lunr.Token[] | '' | null | undefined
     label?: string
   }
 }
