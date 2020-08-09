@@ -11,7 +11,7 @@ namespace lunr {
    * or mutate (or add) metadata for a given token.
    *
    * A pipeline function can indicate that the passed token should be discarded by returning
-   * null, undefined, or an empty string. This token will not be passed to any downstream pipeline 
+   * null, undefined, or an empty string. This token will not be passed to any downstream pipeline
    * functions and will not be added to the index.
    *
    * Multiple tokens can be returned by returning an array of tokens. Each token will be passed
@@ -269,7 +269,7 @@ namespace lunr {
    * or mutate (or add) metadata for a given token.
    *
    * A pipeline function can indicate that the passed token should be discarded by returning
-   * null, undefined, or an empty string. This token will not be passed to any downstream pipeline 
+   * null, undefined, or an empty string. This token will not be passed to any downstream pipeline
    * functions and will not be added to the index.
    *
    * Multiple tokens can be returned by returning an array of tokens. Each token will be passed

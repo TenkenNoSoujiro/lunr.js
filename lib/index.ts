@@ -185,7 +185,7 @@ namespace lunr {
         * for a single query term.
         */
         let terms: lunr.Query.Term[],
-            clauseMatches = lunr.Set.complete
+            clauseMatches = lunr.Set.empty
 
         if (clause.usePipeline && typeof clause.term === "string") {
           terms = this.pipeline.runString(clause.term, {
@@ -360,8 +360,8 @@ namespace lunr {
       }
 
       let matchingFieldRefs = Object.keys(matchingFields),
-          results = [],
-          matches = Object.create(null)
+          results: Index.Result[] = [],
+          matches: Record<string, Index.Result> = Object.create(null)
 
       /*
       * If the query is negated (contains only prohibited terms)
@@ -410,7 +410,7 @@ namespace lunr {
           docMatch.score += score
           docMatch.matchData.combine(matchingFields[fieldRef.toString()])
         } else {
-          let match = {
+          let match: Index.Result = {
             ref: docRef,
             score: score,
             matchData: matchingFields[fieldRef.toString()]

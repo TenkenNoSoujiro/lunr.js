@@ -1,5 +1,5 @@
 /**
- * lunr - http://lunrjs.com - A bit like Solr, but much smaller and not as bright - 2.3.5
+ * lunr - http://lunrjs.com - A bit like Solr, but much smaller and not as bright - 2.3.8
  * Copyright (C) 2020 Oliver Nightingale
  * @license MIT
  */
@@ -38,7 +38,7 @@
  */
 declare function lunr<T = object>(config: (this: lunr.Builder<T>, builder: lunr.Builder<T>) => void): lunr.Index;
 declare namespace lunr {
-    const version = "2.3.5";
+    const version = "2.3.8";
 }
 /*!
  * lunr.utils
@@ -109,10 +109,10 @@ declare namespace lunr {
 declare namespace lunr {
     class FieldRef {
         static readonly joiner = "/";
-        docRef: any;
+        docRef: string;
         fieldName: string;
         private _stringValue?;
-        constructor(docRef: any, fieldName: string, stringValue?: string);
+        constructor(docRef: string, fieldName: string, stringValue?: string);
         toString(): string;
         /**
          * @param {string} s
@@ -896,11 +896,7 @@ declare namespace lunr {
          * @throws {lunr.QueryParseError} If the passed query string cannot be parsed.
          * @returns {lunr.Index.Result[]}
          */
-        search(queryString: Index.QueryString): {
-            ref: any;
-            score: number;
-            matchData: MatchData;
-        }[];
+        search(queryString: Index.QueryString): Index.Result[];
         /**
          * Performs a query against the index using the yielded lunr.Query object.
          *
@@ -917,11 +913,7 @@ declare namespace lunr {
          * @param {lunr.Index~queryBuilder} fn - A function that is used to build the query.
          * @returns {lunr.Index~Result[]}
          */
-        query(fn: Index.queryBuilder): {
-            ref: any;
-            score: number;
-            matchData: MatchData;
-        }[];
+        query(fn: Index.queryBuilder): Index.Result[];
         /**
          * Prepares the index for JSON serialization.
          *

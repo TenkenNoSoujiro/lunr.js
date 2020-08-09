@@ -3,12 +3,12 @@ namespace lunr {
   export class FieldRef {
     static readonly joiner = "/"
 
-    docRef: any
+    docRef: string
     fieldName: string
 
     private _stringValue?: string
 
-    constructor (docRef: any, fieldName: string, stringValue?: string) {
+    constructor (docRef: string, fieldName: string, stringValue?: string) {
       this.docRef = docRef
       this.fieldName = fieldName
       this._stringValue = stringValue

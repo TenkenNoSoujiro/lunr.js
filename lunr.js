@@ -1,5 +1,5 @@
 /**
- * lunr - http://lunrjs.com - A bit like Solr, but much smaller and not as bright - 2.3.5
+ * lunr - http://lunrjs.com - A bit like Solr, but much smaller and not as bright - 2.3.8
  * Copyright (C) 2020 Oliver Nightingale
  * @license MIT
  */
@@ -40,14 +40,14 @@
  */
 // eslint-disable-next-line func-style
 function lunr(config) {
-    let builder = new lunr.Builder;
+    var builder = new lunr.Builder;
     builder.pipeline.add(lunr.trimmer, lunr.stopWordFilter, lunr.stemmer);
     builder.searchPipeline.add(lunr.stemmer);
     config.call(builder, builder);
     return builder.build();
 }
 (function (lunr) {
-    lunr.version = "2.3.5";
+    lunr.version = "2.3.8";
 })(lunr || (lunr = {}));
 /*!
  * lunr.utils
@@ -60,7 +60,7 @@ function lunr(config) {
 // @ts-ignore
 var lunr;
 (function (lunr) {
-    let utils;
+    var utils;
     (function (utils) {
         /**
          * Print a warning message to the console.
@@ -124,9 +124,10 @@ var lunr;
             if (obj === null || obj === undefined) {
                 return obj;
             }
-            let clone = Object.create(null), keys = Object.keys(obj);
-            for (const key of keys) {
-                let val = obj[key];
+            var clone = Object.create(null), keys = Object.keys(obj);
+            for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+                var key = keys_1[_i];
+                var val = obj[key];
                 if (Array.isArray(val)) {
                     clone[key] = val.slice();
                     continue;
@@ -154,18 +155,21 @@ var lunr;
             return a - b;
         };
         /* @internal */
-        utils.binarySearch = function (array, value, comparer = utils.compare, step, bias) {
+        utils.binarySearch = function (array, value, comparer, step, bias) {
+            if (comparer === void 0) { comparer = utils.compare; }
             return utils.binarySearchKey(array, value, utils.identity, comparer, step, bias);
         };
         /* @internal */
-        utils.binarySearchKey = function (array, key, keySelector, comparer, step = 1, bias = 0 /* TWOS_COMPLEMENT */) {
+        utils.binarySearchKey = function (array, key, keySelector, comparer, step, bias) {
+            if (step === void 0) { step = 1; }
+            if (bias === void 0) { bias = 0 /* TWOS_COMPLEMENT */; }
             if (step < 1 || step !== (step | 0))
                 throw new RangeError("'step' must be a positive integer");
             if (array.length % step)
                 throw new TypeError("'array' must have a length that is a multiple of 'step'");
-            let l = 0, h = (array.length / step) - 1;
+            var l = 0, h = (array.length / step) - 1;
             while (l <= h) {
-                let m = l + ((h - l) >> 1), mKey = keySelector(array[m * step]), r = comparer(mKey, key);
+                var m = l + ((h - l) >> 1), mKey = keySelector(array[m * step]), r = comparer(mKey, key);
                 if (r < 0) {
                     l = m + 1;
                 }
@@ -182,8 +186,8 @@ var lunr;
                 default: return ~(l * step);
             }
         };
-        const decimalPattern = /^[+-]?(?:(?:0|[1-9]\d*)(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/;
-        const integerPattern = /^[+-]?0(?:[bB][01]+|[oO][0-7]+|[xX][0-9a-fA-F]+)$/;
+        var decimalPattern = /^[+-]?(?:(?:0|[1-9]\d*)(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/;
+        var integerPattern = /^[+-]?0(?:[bB][01]+|[oO][0-7]+|[xX][0-9a-fA-F]+)$/;
         /* @internal */
         utils.parseNumber = function (str) {
             str = str.trim();
@@ -196,55 +200,69 @@ var lunr;
 // @ts-ignore
 var lunr;
 (function (lunr) {
-    class FieldRef {
-        constructor(docRef, fieldName, stringValue) {
+    var FieldRef = /** @class */ (function () {
+        function FieldRef(docRef, fieldName, stringValue) {
             this.docRef = docRef;
             this.fieldName = fieldName;
             this._stringValue = stringValue;
         }
-        toString() {
+        FieldRef.prototype.toString = function () {
             if (this._stringValue == undefined) {
                 this._stringValue = this.fieldName + FieldRef.joiner + this.docRef;
             }
             return this._stringValue;
-        }
+        };
         /**
          * @param {string} s
          */
-        static fromString(s) {
+        FieldRef.fromString = function (s) {
             var n = s.indexOf(FieldRef.joiner);
             if (n === -1) {
                 throw "malformed field ref string";
             }
             var fieldRef = s.slice(0, n), docRef = s.slice(n + 1);
             return new FieldRef(docRef, fieldRef, s);
-        }
-    }
-    FieldRef.joiner = "/";
+        };
+        FieldRef.joiner = "/";
+        return FieldRef;
+    }());
     lunr.FieldRef = FieldRef;
 })(lunr || (lunr = {}));
 /*!
  * Set
  * Copyright (C) 2020 Oliver Nightingale
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 // @ts-ignore
 var lunr;
 (function (lunr) {
     // These sentinel values exist purely for the purposes of static initialization of `Set.complete`
     // and `Set.empty`
-    let completeSentinel;
-    let emptySentinel;
+    var completeSentinel;
+    var emptySentinel;
     completeSentinel = emptySentinel = [];
     /**
      * A lunr set.
      *
      * @memberOf lunr
      */
-    class Set {
+    var Set = /** @class */ (function () {
         /**
          * @param {string[]} [elements] The elements of the set.
          */
-        constructor(elements) {
+        function Set(elements) {
             if (completeSentinel && elements === completeSentinel ||
                 emptySentinel && elements === emptySentinel) {
                 this.elements = undefined;
@@ -256,7 +274,8 @@ var lunr;
             }
             this.elements = Object.create(null);
             this.length = elements.length;
-            for (const element of elements) {
+            for (var _i = 0, elements_1 = elements; _i < elements_1.length; _i++) {
+                var element = elements_1[_i];
                 this.elements[element] = true;
             }
         }
@@ -266,9 +285,9 @@ var lunr;
          * @param {string} object Object whose presence in this set is to be tested.
          * @returns {boolean} True if this set contains the specified object.
          */
-        contains(object) {
+        Set.prototype.contains = function (object) {
             return !!this.elements[object];
-        }
+        };
         /**
          * Returns a new set containing only the elements that are present in both
          * this set and the specified set.
@@ -276,8 +295,8 @@ var lunr;
          * @param {lunr.Set} [other] set to intersect with this set.
          * @returns {lunr.Set} a new set that is the intersection of this and the specified set.
          */
-        intersect(other) {
-            let a, b, elements, intersection = [];
+        Set.prototype.intersect = function (other) {
+            var a, b, elements, intersection = [];
             if (other === Set.complete) {
                 return this;
             }
@@ -293,7 +312,8 @@ var lunr;
                 b = this;
             }
             elements = Object.keys(a.elements);
-            for (const element of elements) {
+            for (var _i = 0, elements_2 = elements; _i < elements_2.length; _i++) {
+                var element = elements_2[_i];
                 if (b.elements[element]) {
                     intersection.push(element);
                 }
@@ -302,14 +322,14 @@ var lunr;
                 return Set.empty;
             }
             return new Set(intersection);
-        }
+        };
         /**
          * Returns a new set combining the elements of this and the specified set.
          *
          * @param {lunr.Set} other set to union with this set.
          * @return {lunr.Set} a new set that is the union of this and the specified set.
          */
-        union(other) {
+        Set.prototype.union = function (other) {
             if (other === Set.complete) {
                 return Set.complete;
             }
@@ -317,50 +337,59 @@ var lunr;
                 return this;
             }
             return new Set(Object.keys(this.elements).concat(Object.keys(other.elements)));
-        }
-    }
-    /**
-     * A complete set that contains all elements.
-     * @type {lunr.Set}
-     */
-    Set.complete = new class CompleteSet extends Set {
-        constructor() {
-            if (!completeSentinel)
-                throw new TypeError();
-            super(completeSentinel);
-            completeSentinel = undefined;
-        }
-        contains(_value) {
-            return true;
-        }
-        intersect(other) {
-            return other;
-        }
-        union(other) {
-            return other;
-        }
-    };
-    /**
-     * An empty set that contains no elements.
-     * @type {lunr.Set}
-     */
-    Set.empty = new class EmptySet extends Set {
-        constructor() {
-            if (!emptySentinel)
-                throw new TypeError();
-            super(emptySentinel);
-            emptySentinel = undefined;
-        }
-        contains(_value) {
-            return false;
-        }
-        intersect(_other) {
-            return this;
-        }
-        union(other) {
-            return other;
-        }
-    };
+        };
+        /**
+         * A complete set that contains all elements.
+         * @type {lunr.Set}
+         */
+        Set.complete = new /** @class */ (function (_super) {
+            __extends(CompleteSet, _super);
+            function CompleteSet() {
+                var _this = this;
+                if (!completeSentinel)
+                    throw new TypeError();
+                _this = _super.call(this, completeSentinel) || this;
+                completeSentinel = undefined;
+                return _this;
+            }
+            CompleteSet.prototype.contains = function (_value) {
+                return true;
+            };
+            CompleteSet.prototype.intersect = function (other) {
+                return other;
+            };
+            CompleteSet.prototype.union = function (_other) {
+                return this;
+            };
+            return CompleteSet;
+        }(Set));
+        /**
+         * An empty set that contains no elements.
+         * @type {lunr.Set}
+         */
+        Set.empty = new /** @class */ (function (_super) {
+            __extends(EmptySet, _super);
+            function EmptySet() {
+                var _this = this;
+                if (!emptySentinel)
+                    throw new TypeError();
+                _this = _super.call(this, emptySentinel) || this;
+                emptySentinel = undefined;
+                return _this;
+            }
+            EmptySet.prototype.contains = function (_value) {
+                return false;
+            };
+            EmptySet.prototype.intersect = function (_other) {
+                return this;
+            };
+            EmptySet.prototype.union = function (other) {
+                return other;
+            };
+            return EmptySet;
+        }(Set));
+        return Set;
+    }());
     lunr.Set = Set;
 })(lunr || (lunr = {}));
 // @ts-ignore
@@ -375,13 +404,13 @@ var lunr;
      * @param {number} documentCount - The total number of documents.
      */
     lunr.idf = function (posting, documentCount) {
-        let documentsWithTerm = 0;
-        for (let fieldName in posting) {
+        var documentsWithTerm = 0;
+        for (var fieldName in posting) {
             if (fieldName == '_index')
                 continue; // Ignore the term index, its not a field
             documentsWithTerm += Object.keys(posting[fieldName]).length;
         }
-        let x = (documentCount - documentsWithTerm + 0.5) / (documentsWithTerm + 0.5);
+        var x = (documentCount - documentsWithTerm + 0.5) / (documentsWithTerm + 0.5);
         return Math.log(1 + Math.abs(x));
     };
 })(lunr || (lunr = {}));
@@ -396,12 +425,14 @@ var lunr;
      * @property {string} str The string token being wrapped.
      * @property {Object<string, any>} metadata Metadata associated with this token.
      */
-    class Token {
+    var Token = /** @class */ (function () {
         /**
          * @param {string} [str] The string token being wrapped.
          * @param {Object<string, any>} [metadata] Metadata associated with this token.
          */
-        constructor(str = "", metadata = {}) {
+        function Token(str, metadata) {
+            if (str === void 0) { str = ""; }
+            if (metadata === void 0) { metadata = {}; }
             this.str = str;
             this.metadata = metadata;
         }
@@ -409,9 +440,9 @@ var lunr;
          * Returns the token string that is being wrapped by this object.
          * @returns {string}
          */
-        toString() {
+        Token.prototype.toString = function () {
             return this.str;
-        }
+        };
         /**
          * Applies the given function to the wrapped string token.
          *
@@ -423,10 +454,10 @@ var lunr;
          * @param {lunr.Token~updateFunction} fn A function to apply to the token string.
          * @returns {lunr.Token}
          */
-        update(fn) {
+        Token.prototype.update = function (fn) {
             this.str = fn(this.str, this.metadata);
             return this;
-        }
+        };
         /**
          * Creates a clone of this token. Optionally a function can be
          * applied to the cloned token.
@@ -434,10 +465,12 @@ var lunr;
          * @param {lunr.Token~updateFunction} fn - An optional function to apply to the cloned token.
          * @returns {lunr.Token}
          */
-        clone(fn = s => s) {
+        Token.prototype.clone = function (fn) {
+            if (fn === void 0) { fn = function (s) { return s; }; }
             return new Token(fn(this.str, this.metadata), this.metadata);
-        }
-    }
+        };
+        return Token;
+    }());
     lunr.Token = Token;
 })(lunr || (lunr = {}));
 /**
@@ -453,6 +486,17 @@ var lunr;
  * lunr.tokenizer
  * Copyright (C) 2020 Oliver Nightingale
  */
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 // @ts-ignore
 var lunr;
 (function (lunr) {
@@ -480,26 +524,20 @@ var lunr;
         if (Array.isArray(obj)) {
             return obj.map(function (t) {
                 if (t instanceof lunr.Token) {
-                    return new lunr.Token(t.str.toLowerCase(), {
-                        ...lunr.utils.clone(t.metadata),
-                        ...lunr.utils.clone(metadata)
-                    });
+                    return new lunr.Token(t.str.toLowerCase(), __assign({}, lunr.utils.clone(t.metadata), lunr.utils.clone(metadata)));
                 }
                 return new lunr.Token(lunr.utils.asString(t).toLowerCase(), lunr.utils.clone(metadata));
             });
         }
         if (obj instanceof lunr.Token) {
-            return [new lunr.Token(obj.str.toLowerCase(), {
-                    ...lunr.utils.clone(obj.metadata),
-                    ...lunr.utils.clone(metadata)
-                })];
+            return [new lunr.Token(obj.str.toLowerCase(), __assign({}, lunr.utils.clone(obj.metadata), lunr.utils.clone(metadata)))];
         }
-        let str = obj.toString().toLowerCase(), len = str.length, tokens = [];
-        for (let sliceEnd = 0, sliceStart = 0; sliceEnd <= len; sliceEnd++) {
-            let char = str.charAt(sliceEnd), sliceLength = sliceEnd - sliceStart;
+        var str = obj.toString().toLowerCase(), len = str.length, tokens = [];
+        for (var sliceEnd = 0, sliceStart = 0; sliceEnd <= len; sliceEnd++) {
+            var char = str.charAt(sliceEnd), sliceLength = sliceEnd - sliceStart;
             if ((char.match(lunr.tokenizer.separator) || sliceEnd == len)) {
                 if (sliceLength > 0) {
-                    let tokenMetadata = lunr.utils.clone(metadata) || {};
+                    var tokenMetadata = lunr.utils.clone(metadata) || {};
                     tokenMetadata["position"] = [sliceStart, sliceLength];
                     tokenMetadata["index"] = tokens.length;
                     tokens.push(new lunr.Token(str.slice(sliceStart, sliceEnd), tokenMetadata));
@@ -573,8 +611,8 @@ var lunr;
      *
      * @memberOf lunr
      */
-    class Pipeline {
-        constructor() {
+    var Pipeline = /** @class */ (function () {
+        function Pipeline() {
             this._stack = [];
         }
         /**
@@ -589,25 +627,25 @@ var lunr;
          * @param {lunr.PipelineFunction} fn The function to check for.
          * @param {string} label The label to register this function with
          */
-        static registerFunction(fn, label) {
+        Pipeline.registerFunction = function (fn, label) {
             if (label in this.registeredFunctions) {
                 lunr.utils.warn('Overwriting existing registered function: ' + label);
             }
             fn.label = label;
             Pipeline.registeredFunctions[fn.label] = fn;
-        }
+        };
         /**
          * Warns if the function is not registered as a Pipeline function.
          *
          * @private
          * @param {lunr.PipelineFunction} fn The function to check for.
          */
-        static warnIfFunctionNotRegistered(fn) {
-            let isRegistered = fn.label && (fn.label in this.registeredFunctions);
+        Pipeline.warnIfFunctionNotRegistered = function (fn) {
+            var isRegistered = fn.label && (fn.label in this.registeredFunctions);
             if (!isRegistered) {
                 lunr.utils.warn('Function is not registered with pipeline. This may cause problems when serialising the index.\n', fn);
             }
-        }
+        };
         /**
          * Loads a previously serialised pipeline.
          *
@@ -618,10 +656,10 @@ var lunr;
          * @param {string[]} serialised - The serialised pipeline to load.
          * @returns {lunr.Pipeline}
          */
-        static load(serialised) {
-            let pipeline = new lunr.Pipeline;
+        Pipeline.load = function (serialised) {
+            var pipeline = new lunr.Pipeline;
             serialised.forEach(function (fnName) {
-                let fn = Pipeline.registeredFunctions[fnName];
+                var fn = Pipeline.registeredFunctions[fnName];
                 if (fn) {
                     pipeline.add(fn);
                 }
@@ -630,7 +668,7 @@ var lunr;
                 }
             });
             return pipeline;
-        }
+        };
         /**
          * Adds new functions to the end of the pipeline.
          *
@@ -638,12 +676,17 @@ var lunr;
          *
          * @param {...lunr.PipelineFunction} functions Any number of functions to add to the pipeline.
          */
-        add(...functions) {
-            functions.forEach((fn) => {
+        Pipeline.prototype.add = function () {
+            var _this = this;
+            var functions = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                functions[_i] = arguments[_i];
+            }
+            functions.forEach(function (fn) {
                 Pipeline.warnIfFunctionNotRegistered(fn);
-                this._stack.push(fn);
+                _this._stack.push(fn);
             });
-        }
+        };
         /**
          * Adds a single function after a function that already exists in the
          * pipeline.
@@ -653,15 +696,15 @@ var lunr;
          * @param {lunr.PipelineFunction} existingFn A function that already exists in the pipeline.
          * @param {lunr.PipelineFunction} newFn The new function to add to the pipeline.
          */
-        after(existingFn, newFn) {
+        Pipeline.prototype.after = function (existingFn, newFn) {
             Pipeline.warnIfFunctionNotRegistered(newFn);
-            let pos = this._stack.indexOf(existingFn);
+            var pos = this._stack.indexOf(existingFn);
             if (pos == -1) {
                 throw new Error('Cannot find existingFn');
             }
             pos = pos + 1;
             this._stack.splice(pos, 0, newFn);
-        }
+        };
         /**
          * Adds a single function before a function that already exists in the
          * pipeline.
@@ -671,41 +714,42 @@ var lunr;
          * @param {lunr.PipelineFunction} existingFn A function that already exists in the pipeline.
          * @param {lunr.PipelineFunction} newFn The new function to add to the pipeline.
          */
-        before(existingFn, newFn) {
+        Pipeline.prototype.before = function (existingFn, newFn) {
             Pipeline.warnIfFunctionNotRegistered(newFn);
-            let pos = this._stack.indexOf(existingFn);
+            var pos = this._stack.indexOf(existingFn);
             if (pos == -1) {
                 throw new Error('Cannot find existingFn');
             }
             this._stack.splice(pos, 0, newFn);
-        }
+        };
         /**
          * Removes a function from the pipeline.
          *
          * @param {lunr.PipelineFunction} fn The function to remove from the pipeline.
          */
-        remove(fn) {
-            let pos = this._stack.indexOf(fn);
+        Pipeline.prototype.remove = function (fn) {
+            var pos = this._stack.indexOf(fn);
             if (pos == -1) {
                 return;
             }
             this._stack.splice(pos, 1);
-        }
+        };
         /**
          * Runs the current list of functions that make up the pipeline against the
          * passed tokens.
          *
          * @param {lunr.Token[]} tokens The tokens to run through the pipeline.
          */
-        run(tokens) {
-            for (const fn of this._stack) {
-                let memo = [];
-                for (let j = 0; j < tokens.length; j++) {
-                    let result = fn(tokens[j], j, tokens);
+        Pipeline.prototype.run = function (tokens) {
+            for (var _i = 0, _a = this._stack; _i < _a.length; _i++) {
+                var fn = _a[_i];
+                var memo = [];
+                for (var j = 0; j < tokens.length; j++) {
+                    var result = fn(tokens[j], j, tokens);
                     if (result === null || result === void 0 || result === '')
                         continue;
                     if (Array.isArray(result)) {
-                        for (let k = 0; k < result.length; k++) {
+                        for (var k = 0; k < result.length; k++) {
                             memo.push(result[k]);
                         }
                     }
@@ -716,7 +760,7 @@ var lunr;
                 tokens = memo;
             }
             return tokens;
-        }
+        };
         /**
          * Convenience method for passing a string through a pipeline and getting
          * strings out. This method takes care of wrapping the passed string in a
@@ -726,32 +770,33 @@ var lunr;
          * @param {Object<string, *>} metadata Optional metadata to associate with the token
          * passed to the pipeline.
          */
-        runString(str, metadata) {
-            let token = new lunr.Token(str, metadata);
+        Pipeline.prototype.runString = function (str, metadata) {
+            var token = new lunr.Token(str, metadata);
             return this.run([token]).map(function (t) {
                 return t.toString();
             });
-        }
+        };
         /**
          * Resets the pipeline by removing any existing processors.
          *
          */
-        reset() {
+        Pipeline.prototype.reset = function () {
             this._stack = [];
-        }
+        };
         /**
          * Returns a representation of the pipeline ready for serialisation.
          *
          * Logs a warning if the function has not been registered.
          */
-        toJSON() {
+        Pipeline.prototype.toJSON = function () {
             return this._stack.map(function (fn) {
                 Pipeline.warnIfFunctionNotRegistered(fn);
                 return fn.label;
             });
-        }
-    }
-    Pipeline.registeredFunctions = Object.create(null);
+        };
+        Pipeline.registeredFunctions = Object.create(null);
+        return Pipeline;
+    }());
     lunr.Pipeline = Pipeline;
 })(lunr || (lunr = {}));
 /*!
@@ -776,11 +821,12 @@ var lunr;
      *
      * @memberOf lunr
      */
-    class Vector {
+    var Vector = /** @class */ (function () {
         /**
          * @param {number[]} elements The flat list of element index and element value pairs.
          */
-        constructor(elements = []) {
+        function Vector(elements) {
+            if (elements === void 0) { elements = []; }
             this._magnitude = 0;
             this._magnitude = 0;
             this.elements = elements;
@@ -795,13 +841,13 @@ var lunr;
          * @param {number} index The index at which the element should be inserted.
          * @returns {number}
          */
-        positionForIndex(index) {
+        Vector.prototype.positionForIndex = function (index) {
             // For an empty vector the tuple can be inserted at the beginning
             if (this.elements.length == 0) {
                 return 0;
             }
             return lunr.utils.binarySearch(this.elements, index, lunr.utils.compareNumbers, 2, 1 /* LEAST_UPPER_BOUND */);
-        }
+        };
         /**
          * Inserts an element at an index within the vector.
          *
@@ -811,11 +857,11 @@ var lunr;
          * @param {number} insertIdx The index at which the element should be inserted.
          * @param {number} val The value to be inserted into the vector.
          */
-        insert(insertIdx, val) {
+        Vector.prototype.insert = function (insertIdx, val) {
             this.upsert(insertIdx, val, function () {
                 throw "duplicate index";
             });
-        }
+        };
         /**
          * Inserts or updates an existing index within the vector.
          *
@@ -824,7 +870,7 @@ var lunr;
          * @param {function(number, number): number} fn - A function that is called for updates, the existing value and the
          * requested value are passed as arguments
          */
-        upsert(insertIdx, val, fn) {
+        Vector.prototype.upsert = function (insertIdx, val, fn) {
             this._magnitude = 0;
             var position = this.positionForIndex(insertIdx);
             if (this.elements[position] == insertIdx) {
@@ -833,13 +879,13 @@ var lunr;
             else {
                 this.elements.splice(position, 0, insertIdx, val);
             }
-        }
+        };
         /**
          * Calculates the magnitude of this vector.
          *
          * @returns {number}
          */
-        magnitude() {
+        Vector.prototype.magnitude = function () {
             if (this._magnitude)
                 return this._magnitude;
             var sumOfSquares = 0, elementsLength = this.elements.length;
@@ -848,14 +894,14 @@ var lunr;
                 sumOfSquares += val * val;
             }
             return this._magnitude = Math.sqrt(sumOfSquares);
-        }
+        };
         /**
          * Calculates the dot product of this vector and another vector.
          *
          * @param {lunr.Vector} otherVector - The vector to compute the dot product with.
          * @returns {number}
          */
-        dot(otherVector) {
+        Vector.prototype.dot = function (otherVector) {
             var dotProduct = 0, a = this.elements, b = otherVector.elements, aLen = a.length, bLen = b.length, aVal = 0, bVal = 0, i = 0, j = 0;
             while (i < aLen && j < bLen) {
                 aVal = a[i], bVal = b[j];
@@ -872,7 +918,7 @@ var lunr;
                 }
             }
             return dotProduct;
-        }
+        };
         /**
          * Calculates the similarity between this vector and another vector.
          *
@@ -880,30 +926,31 @@ var lunr;
          * similarity with.
          * @returns {number}
          */
-        similarity(otherVector) {
+        Vector.prototype.similarity = function (otherVector) {
             return this.dot(otherVector) / this.magnitude() || 0;
-        }
+        };
         /**
          * Converts the vector to an array of the elements within the vector.
          *
          * @returns {number[]}
          */
-        toArray() {
+        Vector.prototype.toArray = function () {
             var output = new Array(this.elements.length / 2);
             for (var i = 1, j = 0; i < this.elements.length; i += 2, j++) {
                 output[j] = this.elements[i];
             }
             return output;
-        }
+        };
         /**
          * A JSON serializable representation of the vector.
          *
          * @returns {number[]}
          */
-        toJSON() {
+        Vector.prototype.toJSON = function () {
             return this.elements;
-        }
-    }
+        };
+        return Vector;
+    }());
     lunr.Vector = Vector;
 })(lunr || (lunr = {}));
 /* eslint-disable */
@@ -927,7 +974,7 @@ var lunr;
      * @function
      */
     lunr.stemmer = (function () {
-        let step2list = {
+        var step2list = {
             "ational": "ate",
             "tional": "tion",
             "enci": "ence",
@@ -965,28 +1012,28 @@ var lunr;
         meq1 = "^(" + C + ")?" + V + C + "(" + V + ")?$", // [C]VC[V] is m=1
         mgr1 = "^(" + C + ")?" + V + C + V + C, // [C]VCVC... is m>1
         s_v = "^(" + C + ")?" + v; // vowel in stem
-        let re_mgr0 = new RegExp(mgr0);
-        let re_mgr1 = new RegExp(mgr1);
-        let re_meq1 = new RegExp(meq1);
-        let re_s_v = new RegExp(s_v);
-        let re_1a = /^(.+?)(ss|i)es$/;
-        let re2_1a = /^(.+?)([^s])s$/;
-        let re_1b = /^(.+?)eed$/;
-        let re2_1b = /^(.+?)(ed|ing)$/;
-        let re_1b_2 = /.$/;
-        let re2_1b_2 = /(at|bl|iz)$/;
-        let re3_1b_2 = new RegExp("([^aeiouylsz])\\1$");
-        let re4_1b_2 = new RegExp("^" + C + v + "[^aeiouwxy]$");
-        let re_1c = /^(.+?[^aeiou])y$/;
-        let re_2 = /^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$/;
-        let re_3 = /^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/;
-        let re_4 = /^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/;
-        let re2_4 = /^(.+?)(s|t)(ion)$/;
-        let re_5 = /^(.+?)e$/;
-        let re_5_1 = /ll$/;
-        let re3_5 = new RegExp("^" + C + v + "[^aeiouwxy]$");
-        let porterStemmer = w => {
-            let stem, suffix, firstch, re, re2, re3, re4, fp;
+        var re_mgr0 = new RegExp(mgr0);
+        var re_mgr1 = new RegExp(mgr1);
+        var re_meq1 = new RegExp(meq1);
+        var re_s_v = new RegExp(s_v);
+        var re_1a = /^(.+?)(ss|i)es$/;
+        var re2_1a = /^(.+?)([^s])s$/;
+        var re_1b = /^(.+?)eed$/;
+        var re2_1b = /^(.+?)(ed|ing)$/;
+        var re_1b_2 = /.$/;
+        var re2_1b_2 = /(at|bl|iz)$/;
+        var re3_1b_2 = new RegExp("([^aeiouylsz])\\1$");
+        var re4_1b_2 = new RegExp("^" + C + v + "[^aeiouwxy]$");
+        var re_1c = /^(.+?[^aeiou])y$/;
+        var re_2 = /^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$/;
+        var re_3 = /^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/;
+        var re_4 = /^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/;
+        var re2_4 = /^(.+?)(s|t)(ion)$/;
+        var re_5 = /^(.+?)e$/;
+        var re_5_1 = /ll$/;
+        var re3_5 = new RegExp("^" + C + v + "[^aeiouwxy]$");
+        var porterStemmer = function (w) {
+            var stem, suffix, firstch, re, re2, re3, re4, fp;
             if (w.length < 3) {
                 return w;
             }
@@ -1099,7 +1146,7 @@ var lunr;
             }
             return w;
         };
-        return (token) => {
+        return function (token) {
             return token.update(porterStemmer);
         };
     })();
@@ -1125,11 +1172,11 @@ var lunr;
      * @see lunr.stopWordFilter
      */
     lunr.generateStopWordFilter = function (stopWords) {
-        var words = stopWords.reduce((memo, stopWord) => {
+        var words = stopWords.reduce(function (memo, stopWord) {
             memo[stopWord] = stopWord;
             return memo;
         }, {});
-        return token => {
+        return function (token) {
             if (token && words[token.toString()] !== token.toString())
                 return token;
         };
@@ -1294,7 +1341,7 @@ var lunr;
      * @see lunr.Pipeline
      */
     lunr.trimmer = function (token) {
-        return token.update(s => {
+        return token.update(function (s) {
             return s.replace(/^\W+/g, '').replace(/\W+$/, '');
         });
     };
@@ -1328,8 +1375,8 @@ var lunr;
      *
      * @memberOf lunr
      */
-    class TokenSet {
-        constructor() {
+    var TokenSet = /** @class */ (function () {
+        function TokenSet() {
             this.final = false;
             this.edges = {};
             this.id = TokenSet._nextId++;
@@ -1344,14 +1391,14 @@ var lunr;
          *
          * @returns {string[]}
          */
-        toArray() {
-            let words = [];
-            let stack = [{
+        TokenSet.prototype.toArray = function () {
+            var words = [];
+            var stack = [{
                     prefix: "",
                     node: this
                 }];
             while (stack.length) {
-                let frame = stack.pop(), edges = Object.keys(frame.node.edges), len = edges.length;
+                var frame = stack.pop(), edges = Object.keys(frame.node.edges), len = edges.length;
                 if (frame.node.final) {
                     /* In Safari, at this point the prefix is sometimes corrupted, see:
                     * https://github.com/olivernn/lunr.js/issues/279 Calling any
@@ -1360,8 +1407,8 @@ var lunr;
                     frame.prefix.charAt(0);
                     words.push(frame.prefix);
                 }
-                for (let i = 0; i < len; i++) {
-                    let edge = edges[i];
+                for (var i = 0; i < len; i++) {
+                    var edge = edges[i];
                     stack.push({
                         prefix: frame.prefix.concat(edge),
                         node: frame.node.edges[edge]
@@ -1369,7 +1416,7 @@ var lunr;
                 }
             }
             return words;
-        }
+        };
         /**
          * Generates a string representation of a TokenSet.
          *
@@ -1380,7 +1427,7 @@ var lunr;
          *
          * @returns {string}
          */
-        toString() {
+        TokenSet.prototype.toString = function () {
             // NOTE: Using Object.keys here as this.edges is very likely
             // to enter 'hash-mode' with many keys being added
             //
@@ -1391,13 +1438,13 @@ var lunr;
             if (this._str) {
                 return this._str;
             }
-            let str = this.final ? '1' : '0', labels = Object.keys(this.edges).sort(), len = labels.length;
-            for (let i = 0; i < len; i++) {
-                let label = labels[i], node = this.edges[label];
+            var str = this.final ? '1' : '0', labels = Object.keys(this.edges).sort(), len = labels.length;
+            for (var i = 0; i < len; i++) {
+                var label = labels[i], node = this.edges[label];
                 str = str + label + node.id;
             }
             return str;
-        }
+        };
         /**
          * Returns a new TokenSet that is the intersection of
          * this TokenSet and the passed TokenSet.
@@ -1408,26 +1455,26 @@ var lunr;
          * @param {lunr.TokenSet} b An other TokenSet to intersect with.
          * @returns {lunr.TokenSet}
          */
-        intersect(b) {
-            let output = new TokenSet;
-            let stack = [{
+        TokenSet.prototype.intersect = function (b) {
+            var output = new TokenSet;
+            var stack = [{
                     qNode: b,
                     output: output,
                     node: this
                 }];
             while (stack.length) {
-                let frame = stack.pop();
+                var frame = stack.pop();
                 // NOTE: As with the #toString method, we are using
                 // Object.keys and a for loop instead of a for-in loop
                 // as both of these objects enter 'hash' mode, causing
                 // the function to be de-optimised in V8
-                let qEdges = Object.keys(frame.qNode.edges), qLen = qEdges.length, nEdges = Object.keys(frame.node.edges), nLen = nEdges.length;
-                for (let q = 0; q < qLen; q++) {
-                    let qEdge = qEdges[q];
-                    for (let n = 0; n < nLen; n++) {
-                        let nEdge = nEdges[n];
+                var qEdges = Object.keys(frame.qNode.edges), qLen = qEdges.length, nEdges = Object.keys(frame.node.edges), nLen = nEdges.length;
+                for (var q = 0; q < qLen; q++) {
+                    var qEdge = qEdges[q];
+                    for (var n = 0; n < nLen; n++) {
+                        var nEdge = nEdges[n];
                         if (nEdge == qEdge || qEdge == '*') {
-                            let node = frame.node.edges[nEdge], qNode = frame.qNode.edges[qEdge], final = node.final && qNode.final, next = undefined;
+                            var node = frame.node.edges[nEdge], qNode = frame.qNode.edges[qEdge], final = node.final && qNode.final, next = undefined;
                             if (nEdge in frame.output.edges) {
                                 // an edge already exists for this character
                                 // no need to create a new node, just set the finality
@@ -1453,7 +1500,7 @@ var lunr;
                 }
             }
             return output;
-        }
+        };
         /**
          * Creates a TokenSet instance from the given sorted array of words.
          *
@@ -1461,14 +1508,14 @@ var lunr;
          * @returns {lunr.TokenSet}
          * @throws Will throw an error if the input array is not sorted.
          */
-        static fromArray(arr) {
-            let builder = new TokenSet.Builder;
-            for (let i = 0, len = arr.length; i < len; i++) {
+        TokenSet.fromArray = function (arr) {
+            var builder = new TokenSet.Builder;
+            for (var i = 0, len = arr.length; i < len; i++) {
                 builder.insert(arr[i]);
             }
             builder.finish();
             return builder.root;
-        }
+        };
         /**
          * Creates a token set from a query clause.
          *
@@ -1476,7 +1523,7 @@ var lunr;
          * @param {lunr.Query~Clause} clause A single clause from lunr.Query.
          * @returns {lunr.TokenSet}
          */
-        static fromClause(clause) {
+        TokenSet.fromClause = function (clause) {
             if (typeof clause.term === "object") {
                 if (!clause.numberMap)
                     throw new Error("A comparator or range clause requires a number map");
@@ -1487,7 +1534,7 @@ var lunr;
             return 'editDistance' in clause
                 ? TokenSet.fromFuzzyString(clause.term, clause.editDistance)
                 : TokenSet.fromString(clause.term);
-        }
+        };
         /**
          * Creates a token set representing a single string with a specified
          * edit distance.
@@ -1503,18 +1550,18 @@ var lunr;
          * @param {number} editDistance The allowed edit distance to match.
          * @returns {lunr.TokenSet}
          */
-        static fromFuzzyString(str, editDistance) {
-            let root = new TokenSet;
-            let stack = [{
+        TokenSet.fromFuzzyString = function (str, editDistance) {
+            var root = new TokenSet;
+            var stack = [{
                     node: root,
                     editsRemaining: editDistance,
                     str: str
                 }];
             while (stack.length) {
-                let frame = stack.pop();
+                var frame = stack.pop();
                 // no edit
                 if (frame.str.length > 0) {
-                    let char = frame.str.charAt(0), noEditNode;
+                    var char = frame.str.charAt(0), noEditNode = void 0;
                     if (char in frame.node.edges) {
                         noEditNode = frame.node.edges[char];
                     }
@@ -1535,7 +1582,7 @@ var lunr;
                     continue;
                 }
                 // insertion
-                let insertionNode;
+                var insertionNode = void 0;
                 if ("*" in frame.node.edges) {
                     insertionNode = frame.node.edges["*"];
                 }
@@ -1570,7 +1617,7 @@ var lunr;
                 // can only do a substitution if we have enough edits remaining
                 // and if there are characters left to substitute
                 if (frame.str.length >= 1) {
-                    let substitutionNode;
+                    var substitutionNode = void 0;
                     if ("*" in frame.node.edges) {
                         substitutionNode = frame.node.edges["*"];
                     }
@@ -1591,7 +1638,7 @@ var lunr;
                 // can only do a transposition if there are edits remaining
                 // and there are enough characters to transpose
                 if (frame.str.length > 1) {
-                    let charA = frame.str.charAt(0), charB = frame.str.charAt(1), transposeNode;
+                    var charA = frame.str.charAt(0), charB = frame.str.charAt(1), transposeNode = void 0;
                     if (charB in frame.node.edges) {
                         transposeNode = frame.node.edges[charB];
                     }
@@ -1610,7 +1657,7 @@ var lunr;
                 }
             }
             return root;
-        }
+        };
         /**
          * Creates a TokenSet from a string.
          *
@@ -1621,8 +1668,8 @@ var lunr;
          * @param {string} str The string to create a TokenSet from.
          * @returns {lunr.TokenSet}
          */
-        static fromString(str) {
-            let node = new TokenSet, root = node;
+        TokenSet.fromString = function (str) {
+            var node = new TokenSet, root = node;
             /*
             * Iterates through all characters within the passed string
             * appending a node for each character.
@@ -1631,31 +1678,32 @@ var lunr;
             * referencing edge is introduced to continually match
             * any number of any characters.
             */
-            for (let i = 0, len = str.length; i < len; i++) {
-                let char = str[i], final = (i == len - 1);
+            for (var i = 0, len = str.length; i < len; i++) {
+                var char = str[i], final = (i == len - 1);
                 if (char == "*") {
                     node.edges[char] = node;
                     node.final = final;
                 }
                 else {
-                    let next = new TokenSet;
+                    var next = new TokenSet;
                     next.final = final;
                     node.edges[char] = next;
                     node = next;
                 }
             }
             return root;
-        }
-    }
-    /**
-     * Keeps track of the next, auto increment, identifier to assign
-     * to a new tokenSet.
-     *
-     * TokenSets require a unique identifier to be correctly minimised.
-     *
-     * @private
-     */
-    TokenSet._nextId = 1;
+        };
+        /**
+         * Keeps track of the next, auto increment, identifier to assign
+         * to a new tokenSet.
+         *
+         * TokenSets require a unique identifier to be correctly minimised.
+         *
+         * @private
+         */
+        TokenSet._nextId = 1;
+        return TokenSet;
+    }());
     lunr.TokenSet = TokenSet;
 })(lunr || (lunr = {}));
 // @ts-ignore
@@ -1663,19 +1711,19 @@ var lunr;
 (function (lunr) {
     var TokenSet;
     (function (TokenSet) {
-        class Builder {
-            constructor() {
+        var Builder = /** @class */ (function () {
+            function Builder() {
                 this.root = new TokenSet;
                 this.previousWord = "";
                 this.uncheckedNodes = [];
                 this.minimizedNodes = {};
             }
-            insert(word) {
-                let node, commonPrefix = 0;
+            Builder.prototype.insert = function (word) {
+                var node, commonPrefix = 0;
                 if (word < this.previousWord) {
                     throw new Error("Out of order word insertion");
                 }
-                for (let i = 0; i < word.length && i < this.previousWord.length; i++) {
+                for (var i = 0; i < word.length && i < this.previousWord.length; i++) {
                     if (word[i] != this.previousWord[i])
                         break;
                     commonPrefix++;
@@ -1687,8 +1735,8 @@ var lunr;
                 else {
                     node = this.uncheckedNodes[this.uncheckedNodes.length - 1].child;
                 }
-                for (let i = commonPrefix; i < word.length; i++) {
-                    let nextNode = new TokenSet, char = word[i];
+                for (var i = commonPrefix; i < word.length; i++) {
+                    var nextNode = new TokenSet, char = word[i];
                     node.edges[char] = nextNode;
                     this.uncheckedNodes.push({
                         parent: node,
@@ -1699,13 +1747,13 @@ var lunr;
                 }
                 node.final = true;
                 this.previousWord = word;
-            }
-            finish() {
+            };
+            Builder.prototype.finish = function () {
                 this.minimize(0);
-            }
-            minimize(downTo) {
-                for (let i = this.uncheckedNodes.length - 1; i >= downTo; i--) {
-                    let node = this.uncheckedNodes[i], childKey = node.child.toString();
+            };
+            Builder.prototype.minimize = function (downTo) {
+                for (var i = this.uncheckedNodes.length - 1; i >= downTo; i--) {
+                    var node = this.uncheckedNodes[i], childKey = node.child.toString();
                     if (childKey in this.minimizedNodes) {
                         node.parent.edges[node.char] = this.minimizedNodes[childKey];
                     }
@@ -1717,8 +1765,9 @@ var lunr;
                     }
                     this.uncheckedNodes.pop();
                 }
-            }
-        }
+            };
+            return Builder;
+        }());
         TokenSet.Builder = Builder;
     })(TokenSet = lunr.TokenSet || (lunr.TokenSet = {}));
 })(lunr || (lunr = {}));
@@ -1728,12 +1777,12 @@ var lunr;
     /**
      * @memberOf lunr
      */
-    class NumberMap {
-        constructor(entries) {
+    var NumberMap = /** @class */ (function () {
+        function NumberMap(entries) {
             this.entries = entries;
         }
-        matchComparator(comparator, comparand) {
-            let index = this.binarySearch(comparand), startIndex = 0, endIndex = this.entries.length;
+        NumberMap.prototype.matchComparator = function (comparator, comparand) {
+            var index = this.binarySearch(comparand), startIndex = 0, endIndex = this.entries.length;
             switch (comparator) {
                 case lunr.Query.comparator.GREATERTHAN:
                     startIndex = (index < 0 ? ~index : index) + 1;
@@ -1752,20 +1801,20 @@ var lunr;
                     break;
             }
             return this.collectTokens(startIndex, endIndex);
-        }
-        matchRange(start, end) {
-            let startIndex = start == "*" ? 0 : this.binarySearch(start);
+        };
+        NumberMap.prototype.matchRange = function (start, end) {
+            var startIndex = start == "*" ? 0 : this.binarySearch(start);
             if (startIndex < 0) {
                 startIndex = ~startIndex + 1;
             }
-            let endIndex = end == "*" ? this.entries.length : this.binarySearch(end);
+            var endIndex = end == "*" ? this.entries.length : this.binarySearch(end);
             if (endIndex < 0) {
                 endIndex = ~endIndex;
             }
             return this.collectTokens(startIndex, endIndex);
-        }
-        collectTokens(startIndex, endIndex) {
-            let result = [];
+        };
+        NumberMap.prototype.collectTokens = function (startIndex, endIndex) {
+            var result = [];
             if (startIndex < this.entries.length && endIndex > 0) {
                 if (startIndex < 0)
                     startIndex = 0;
@@ -1776,24 +1825,26 @@ var lunr;
                 }
             }
             return lunr.TokenSet.fromArray(result.sort());
-        }
-        static selectValue(entry) {
+        };
+        NumberMap.selectValue = function (entry) {
             return entry.value;
-        }
-        binarySearch(value) {
+        };
+        NumberMap.prototype.binarySearch = function (value) {
             return lunr.utils.binarySearchKey(this.entries, value, NumberMap.selectValue, lunr.utils.compareNumbers, 1);
-        }
-        static fromInvertedIndex(invertedIndex) {
-            const numbersBuilder = new NumberMap.Builder();
-            for (const term of Object.keys(invertedIndex)) {
-                const number = lunr.utils.parseNumber(term);
+        };
+        NumberMap.fromInvertedIndex = function (invertedIndex) {
+            var numbersBuilder = new NumberMap.Builder();
+            for (var _i = 0, _a = Object.keys(invertedIndex); _i < _a.length; _i++) {
+                var term = _a[_i];
+                var number = lunr.utils.parseNumber(term);
                 if (!isNaN(number)) {
                     numbersBuilder.add(number, term);
                 }
             }
             return numbersBuilder.build();
-        }
-    }
+        };
+        return NumberMap;
+    }());
     lunr.NumberMap = NumberMap;
 })(lunr || (lunr = {}));
 // @ts-ignore
@@ -1801,29 +1852,30 @@ var lunr;
 (function (lunr) {
     var NumberMap;
     (function (NumberMap) {
-        class Builder {
-            constructor() {
+        var Builder = /** @class */ (function () {
+            function Builder() {
                 this.map = Object.create(null);
                 this.map = Object.create(null);
             }
-            add(value, token) {
-                const entry = this.map[value];
+            Builder.prototype.add = function (value, token) {
+                var entry = this.map[value];
                 if (entry) {
                     entry.tokens.push(token);
                 }
                 else {
-                    this.map[value] = { value, tokens: [token] };
+                    this.map[value] = { value: value, tokens: [token] };
                 }
-            }
-            build() {
+            };
+            Builder.prototype.build = function () {
                 return new NumberMap(Object
                     .values(this.map)
                     .sort(NumberMap.Builder.compareEntries));
-            }
-            static compareEntries(a, b) {
+            };
+            Builder.compareEntries = function (a, b) {
                 return a.value - b.value;
-            }
-        }
+            };
+            return Builder;
+        }());
         NumberMap.Builder = Builder;
     })(NumberMap = lunr.NumberMap || (lunr.NumberMap = {}));
 })(lunr || (lunr = {}));
@@ -1908,7 +1960,7 @@ var lunr;
      *
      * @memberOf lunr
      */
-    class Index {
+    var Index = /** @class */ (function () {
         /**
          * @param {object} attrs - The attributes of the built search index.
          * @param {object} attrs.invertedIndex - An index of term/field to document reference.
@@ -1919,7 +1971,7 @@ var lunr;
          * @param {Array<"string" | "number">} attrs.fieldTypes
          * @param {lunr.Pipeline} attrs.pipeline - The pipeline to use for search terms.
         */
-        constructor(attrs) {
+        function Index(attrs) {
             this.invertedIndex = attrs.invertedIndex;
             this.fieldVectors = attrs.fieldVectors;
             this.tokenSet = attrs.tokenSet;
@@ -1941,12 +1993,12 @@ var lunr;
          * @throws {lunr.QueryParseError} If the passed query string cannot be parsed.
          * @returns {lunr.Index.Result[]}
          */
-        search(queryString) {
-            return this.query(query => {
-                let parser = new lunr.QueryParser(queryString, query);
+        Index.prototype.search = function (queryString) {
+            return this.query(function (query) {
+                var parser = new lunr.QueryParser(queryString, query);
                 parser.parse();
             });
-        }
+        };
         /**
          * Performs a query against the index using the yielded lunr.Query object.
          *
@@ -1963,25 +2015,26 @@ var lunr;
          * @param {lunr.Index~queryBuilder} fn - A function that is used to build the query.
          * @returns {lunr.Index~Result[]}
          */
-        query(fn) {
+        Index.prototype.query = function (fn) {
             // for each query clause
             // * process terms
             // * expand terms from token set
             // * find matching documents and metadata
             // * get document vectors
             // * score documents
-            let query = new lunr.Query(this.fields, this.fieldTypes, this.numberMap), matchingFields = Object.create(null), queryVectors = Object.create(null), termFieldCache = Object.create(null), requiredMatches = Object.create(null), prohibitedMatches = Object.create(null), fieldTypeCache = Object.create(null);
+            var query = new lunr.Query(this.fields, this.fieldTypes, this.numberMap), matchingFields = Object.create(null), queryVectors = Object.create(null), termFieldCache = Object.create(null), requiredMatches = Object.create(null), prohibitedMatches = Object.create(null), fieldTypeCache = Object.create(null);
             /*
             * To support field level boosts a query vector is created per
             * field. An empty vector is eagerly created to support negated
             * queries.
             */
-            for (let i = 0; i < this.fields.length; i++) {
+            for (var i = 0; i < this.fields.length; i++) {
                 queryVectors[this.fields[i]] = new lunr.Vector;
                 fieldTypeCache[this.fields[i]] = this.fieldTypes && this.fieldTypes[i] || "string";
             }
             fn.call(query, query);
-            for (const clause of query.clauses) {
+            for (var _i = 0, _a = query.clauses; _i < _a.length; _i++) {
+                var clause = _a[_i];
                 /*
                 * Unless the pipeline has been disabled for this term, which is
                 * the case for terms with wildcards, we need to pass the clause
@@ -1990,7 +2043,7 @@ var lunr;
                 * term, which means we may end up performing multiple index lookups
                 * for a single query term.
                 */
-                let terms, clauseMatches = lunr.Set.complete;
+                var terms = void 0, clauseMatches = lunr.Set.empty;
                 if (clause.usePipeline && typeof clause.term === "string") {
                     terms = this.pipeline.runString(clause.term, {
                         fields: clause.fields,
@@ -2000,8 +2053,8 @@ var lunr;
                 else {
                     terms = [clause.term];
                 }
-                for (let m = 0; m < terms.length; m++) {
-                    let term = terms[m];
+                for (var m = 0; m < terms.length; m++) {
+                    var term = terms[m];
                     /*
                     * Each term returned from the pipeline needs to use the same query
                     * clause object, e.g. the same boost and or edit distance. The
@@ -2014,7 +2067,7 @@ var lunr;
                     * be used to intersect the indexes token set to get a list of terms
                     * to lookup in the inverted index
                     */
-                    let termTokenSet = lunr.TokenSet.fromClause(clause), expandedTerms = this.tokenSet.intersect(termTokenSet).toArray();
+                    var termTokenSet = lunr.TokenSet.fromClause(clause), expandedTerms = this.tokenSet.intersect(termTokenSet).toArray();
                     /*
                     * If a term marked as required does not exist in the tokenSet it is
                     * impossible for the search to return any matches. We set all the field
@@ -2022,18 +2075,21 @@ var lunr;
                     * clauses.
                     */
                     if (expandedTerms.length === 0 && clause.presence === lunr.Query.presence.REQUIRED) {
-                        for (const field of clause.fields) {
+                        for (var _b = 0, _c = clause.fields; _b < _c.length; _b++) {
+                            var field = _c[_b];
                             requiredMatches[field] = lunr.Set.empty;
                         }
                         break;
                     }
-                    for (const expandedTerm of expandedTerms) {
+                    for (var _d = 0, expandedTerms_1 = expandedTerms; _d < expandedTerms_1.length; _d++) {
+                        var expandedTerm = expandedTerms_1[_d];
                         /*
                         * For each term get the posting and termIndex, this is required for
                         * building the query vector.
                         */
-                        let posting = this.invertedIndex[expandedTerm], termIndex = posting._index;
-                        for (const field of clause.fields) {
+                        var posting = this.invertedIndex[expandedTerm], termIndex = posting._index;
+                        for (var _e = 0, _f = clause.fields; _e < _f.length; _e++) {
+                            var field = _f[_e];
                             /*
                             * For each field that this query term is scoped by (by default
                             * all fields are in scope) we need to get all the document refs
@@ -2042,7 +2098,7 @@ var lunr;
                             * The posting is the entry in the invertedIndex for the matching
                             * term from above.
                             */
-                            let fieldPosting = posting[field], matchingDocumentRefs = Object.keys(fieldPosting), termField = expandedTerm + "/" + field, matchingDocumentsSet = new lunr.Set(matchingDocumentRefs);
+                            var fieldPosting = posting[field], matchingDocumentRefs = Object.keys(fieldPosting), termField = expandedTerm + "/" + field, matchingDocumentsSet = new lunr.Set(matchingDocumentRefs);
                             /*
                             * if the presence of this term is required ensure that the matching
                             * documents are added to the set of required matches for this clause.
@@ -2086,14 +2142,14 @@ var lunr;
                             if (termFieldCache[termField]) {
                                 continue;
                             }
-                            for (let l = 0; l < matchingDocumentRefs.length; l++) {
+                            for (var l = 0; l < matchingDocumentRefs.length; l++) {
                                 /*
                                 * All metadata for this term/field/document triple
                                 * are then extracted and collected into an instance
                                 * of lunr.MatchData ready to be returned in the query
                                 * results
                                 */
-                                let matchingDocumentRef = matchingDocumentRefs[l], matchingFieldRef = new lunr.FieldRef(matchingDocumentRef, field), metadata = fieldPosting[matchingDocumentRef], fieldMatch;
+                                var matchingDocumentRef = matchingDocumentRefs[l], matchingFieldRef = new lunr.FieldRef(matchingDocumentRef, field), metadata = fieldPosting[matchingDocumentRef], fieldMatch = void 0;
                                 if ((fieldMatch = matchingFields[matchingFieldRef.toString()]) === undefined) {
                                     matchingFields[matchingFieldRef.toString()] = new lunr.MatchData(expandedTerm, field, metadata);
                                 }
@@ -2112,7 +2168,8 @@ var lunr;
                  * fields.
                  */
                 if (clause.presence === lunr.Query.presence.REQUIRED) {
-                    for (const field of clause.fields) {
+                    for (var _g = 0, _h = clause.fields; _g < _h.length; _g++) {
+                        var field = _h[_g];
                         requiredMatches[field] = requiredMatches[field].intersect(clauseMatches);
                     }
                 }
@@ -2122,9 +2179,9 @@ var lunr;
              * matching documents into a global set of required and prohibited
              * matches
              */
-            let allRequiredMatches = lunr.Set.complete, allProhibitedMatches = lunr.Set.empty;
-            for (let i = 0; i < this.fields.length; i++) {
-                let field = this.fields[i];
+            var allRequiredMatches = lunr.Set.complete, allProhibitedMatches = lunr.Set.empty;
+            for (var i = 0; i < this.fields.length; i++) {
+                var field = this.fields[i];
                 if (requiredMatches[field]) {
                     allRequiredMatches = allRequiredMatches.intersect(requiredMatches[field]);
                 }
@@ -2132,7 +2189,7 @@ var lunr;
                     allProhibitedMatches = allProhibitedMatches.union(prohibitedMatches[field]);
                 }
             }
-            let matchingFieldRefs = Object.keys(matchingFields), results = [], matches = Object.create(null);
+            var matchingFieldRefs = Object.keys(matchingFields), results = [], matches = Object.create(null);
             /*
             * If the query is negated (contains only prohibited terms)
             * we need to get _all_ fieldRefs currently existing in the
@@ -2145,12 +2202,14 @@ var lunr;
             */
             if (query.isNegated()) {
                 matchingFieldRefs = Object.keys(this.fieldVectors);
-                for (const matchingFieldRef of matchingFieldRefs) {
-                    let fieldRef = lunr.FieldRef.fromString(matchingFieldRef);
+                for (var _j = 0, matchingFieldRefs_1 = matchingFieldRefs; _j < matchingFieldRefs_1.length; _j++) {
+                    var matchingFieldRef = matchingFieldRefs_1[_j];
+                    var fieldRef = lunr.FieldRef.fromString(matchingFieldRef);
                     matchingFields[fieldRef.toString()] = new lunr.MatchData;
                 }
             }
-            for (const matchingFieldRef of matchingFieldRefs) {
+            for (var _k = 0, matchingFieldRefs_2 = matchingFieldRefs; _k < matchingFieldRefs_2.length; _k++) {
+                var matchingFieldRef = matchingFieldRefs_2[_k];
                 /*
                 * Currently we have document fields that match the query, but we
                 * need to return documents. The matchData and scores are combined
@@ -2159,20 +2218,20 @@ var lunr;
                 * Scores are calculated by field, using the query vectors created
                 * above, and combined into a final document score using addition.
                 */
-                let fieldRef = lunr.FieldRef.fromString(matchingFieldRef), docRef = fieldRef.docRef;
+                var fieldRef = lunr.FieldRef.fromString(matchingFieldRef), docRef = fieldRef.docRef;
                 if (!allRequiredMatches.contains(docRef)) {
                     continue;
                 }
                 if (allProhibitedMatches.contains(docRef)) {
                     continue;
                 }
-                let fieldVector = this.fieldVectors[fieldRef.toString()], score = queryVectors[fieldRef.fieldName].similarity(fieldVector), docMatch;
+                var fieldVector = this.fieldVectors[fieldRef.toString()], score = queryVectors[fieldRef.fieldName].similarity(fieldVector), docMatch = void 0;
                 if ((docMatch = matches[docRef]) !== undefined) {
                     docMatch.score += score;
                     docMatch.matchData.combine(matchingFields[fieldRef.toString()]);
                 }
                 else {
-                    let match = {
+                    var match = {
                         ref: docRef,
                         score: score,
                         matchData: matchingFields[fieldRef.toString()]
@@ -2184,8 +2243,8 @@ var lunr;
             /*
             * Sort the results objects by score, highest first.
             */
-            return results.sort((a, b) => b.score - a.score);
-        }
+            return results.sort(function (a, b) { return b.score - a.score; });
+        };
         /**
          * Prepares the index for JSON serialization.
          *
@@ -2194,15 +2253,16 @@ var lunr;
          *
          * @returns {Object}
          */
-        toJSON() {
-            let invertedIndex = Object.keys(this.invertedIndex)
+        Index.prototype.toJSON = function () {
+            var _this = this;
+            var invertedIndex = Object.keys(this.invertedIndex)
                 .sort()
-                .map((term) => {
-                return [term, this.invertedIndex[term]];
+                .map(function (term) {
+                return [term, _this.invertedIndex[term]];
             });
-            let fieldVectors = Object.keys(this.fieldVectors)
-                .map((ref) => {
-                return [ref, this.fieldVectors[ref].toJSON()];
+            var fieldVectors = Object.keys(this.fieldVectors)
+                .map(function (ref) {
+                return [ref, _this.fieldVectors[ref].toJSON()];
             });
             return {
                 version: lunr.version,
@@ -2212,24 +2272,24 @@ var lunr;
                 invertedIndex: invertedIndex,
                 pipeline: this.pipeline.toJSON()
             };
-        }
+        };
         /**
          * Loads a previously serialized lunr.Index
          *
          * @param {Object} serializedIndex - A previously serialized lunr.Index
          * @returns {lunr.Index}
          */
-        static load(serializedIndex) {
-            let fieldVectors = {}, serializedVectors = serializedIndex.fieldVectors, invertedIndex = Object.create(null), serializedInvertedIndex = serializedIndex.invertedIndex, tokenSetBuilder = new lunr.TokenSet.Builder, pipeline = lunr.Pipeline.load(serializedIndex.pipeline);
+        Index.load = function (serializedIndex) {
+            var fieldVectors = {}, serializedVectors = serializedIndex.fieldVectors, invertedIndex = Object.create(null), serializedInvertedIndex = serializedIndex.invertedIndex, tokenSetBuilder = new lunr.TokenSet.Builder, pipeline = lunr.Pipeline.load(serializedIndex.pipeline);
             if (serializedIndex.version != lunr.version) {
                 lunr.utils.warn("Version mismatch when loading serialised index. Current version of lunr '" + lunr.version + "' does not match serialized index '" + serializedIndex.version + "'");
             }
-            for (let i = 0; i < serializedVectors.length; i++) {
-                let tuple = serializedVectors[i], ref = tuple[0], elements = tuple[1];
+            for (var i = 0; i < serializedVectors.length; i++) {
+                var tuple = serializedVectors[i], ref = tuple[0], elements = tuple[1];
                 fieldVectors[ref] = new lunr.Vector(elements);
             }
-            for (let i = 0; i < serializedInvertedIndex.length; i++) {
-                let tuple = serializedInvertedIndex[i], term = tuple[0], posting = tuple[1];
+            for (var i = 0; i < serializedInvertedIndex.length; i++) {
+                var tuple = serializedInvertedIndex[i], term = tuple[0], posting = tuple[1];
                 tokenSetBuilder.insert(term);
                 invertedIndex[term] = posting;
             }
@@ -2237,14 +2297,15 @@ var lunr;
             return new Index({
                 fields: serializedIndex.fields,
                 fieldTypes: serializedIndex.fieldTypes,
-                fieldVectors,
-                invertedIndex,
+                fieldVectors: fieldVectors,
+                invertedIndex: invertedIndex,
                 tokenSet: tokenSetBuilder.root,
                 numberMap: lunr.NumberMap.fromInvertedIndex(invertedIndex),
-                pipeline
+                pipeline: pipeline
             });
-        }
-    }
+        };
+        return Index;
+    }());
     lunr.Index = Index;
 })(lunr || (lunr = {}));
 /*!
@@ -2265,8 +2326,8 @@ var lunr;
      *
      * @memberOf lunr
      */
-    class Builder {
-        constructor() {
+    var Builder = /** @class */ (function () {
+        function Builder() {
             /**
              * The inverted index maps terms to document fields.
              */
@@ -2335,9 +2396,9 @@ var lunr;
          *
          * @param {string} ref - The name of the reference field in the document.
          */
-        ref(ref) {
+        Builder.prototype.ref = function (ref) {
             this._ref = ref;
-        }
+        };
         /**
          * Adds a field to the list of document fields that will be indexed. Every document being
          * indexed should have this field. Null values for this field in indexed documents will
@@ -2357,12 +2418,13 @@ var lunr;
          * @param {"string" | "number"} [attributes.type="string"] - The type of field.
          * @throws {RangeError} fieldName cannot contain unsupported characters '/'
          */
-        field(fieldName, attributes = {}) {
+        Builder.prototype.field = function (fieldName, attributes) {
+            if (attributes === void 0) { attributes = {}; }
             if (/\//.test(fieldName)) {
                 throw new RangeError("Field '" + fieldName + "' contains illegal character '/'");
             }
             this._fields[fieldName] = attributes;
-        }
+        };
         /**
          * A parameter to tune the amount of field length normalisation that is applied when
          * calculating relevance scores. A value of 0 will completely disable any normalisation
@@ -2371,7 +2433,7 @@ var lunr;
          *
          * @param {number} number - The value to set for this tuning parameter.
          */
-        b(number) {
+        Builder.prototype.b = function (number) {
             if (number < 0) {
                 this._b = 0;
             }
@@ -2381,7 +2443,7 @@ var lunr;
             else {
                 this._b = number;
             }
-        }
+        };
         /**
          * A parameter that controls the speed at which a rise in term frequency results in term
          * frequency saturation. The default value is 1.2. Setting this to a higher value will give
@@ -2389,9 +2451,9 @@ var lunr;
          *
          * @param {number} number - The value to set for this tuning parameter.
          */
-        k1(number) {
+        Builder.prototype.k1 = function (number) {
             this._k1 = number;
-        }
+        };
         /**
          * Adds a document to the index.
          *
@@ -2409,21 +2471,30 @@ var lunr;
          * @param {object} attributes - Optional attributes associated with this document.
          * @param {number} [attributes.boost=1] - Boost applied to all terms within this document.
          */
-        add(doc, attributes = {}) {
-            let docRef = doc[this._ref], fields = Object.keys(this._fields);
+        Builder.prototype.add = function (doc, attributes) {
+            if (attributes === void 0) { attributes = {}; }
+            var docRef = doc[this._ref], fields = Object.keys(this._fields);
+            if (typeof docRef !== 'string' && typeof docRef !== 'symbol') {
+                docRef = "" + docRef;
+            }
+            if (typeof docRef !== 'string') {
+                throw new Error("Property '" + this._ref + "' is invalid or missing.");
+            }
             this._documents[docRef] = attributes;
             this.documentCount += 1;
-            for (const fieldName of fields) {
-                let extractor = this._fields[fieldName].extractor, type = this._fields[fieldName].type || "string", field = extractor ? extractor(doc) : doc[fieldName], tokens = this.tokenizer(field, {
+            for (var _i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
+                var fieldName = fields_1[_i];
+                var extractor = this._fields[fieldName].extractor, type = this._fields[fieldName].type || "string", field = extractor ? extractor(doc) : doc[fieldName], tokens = this.tokenizer(field, {
                     fields: [fieldName],
-                    type
+                    type: type
                 }), terms = this.pipeline.run(tokens), fieldRef = new lunr.FieldRef(docRef, fieldName), fieldTerms = Object.create(null);
                 this.fieldTermFrequencies["" + fieldRef] = fieldTerms;
                 this.fieldLengths["" + fieldRef] = 0;
                 // store the length of this field for this document
                 this.fieldLengths["" + fieldRef] += terms.length;
                 // calculate term frequencies for this field
-                for (const term of terms) {
+                for (var _a = 0, terms_1 = terms; _a < terms_1.length; _a++) {
+                    var term = terms_1[_a];
                     if (fieldTerms["" + term] == undefined) {
                         fieldTerms["" + term] = 0;
                     }
@@ -2431,10 +2502,10 @@ var lunr;
                     // add to inverted index
                     // create an initial posting if one doesn't exist
                     if (this.invertedIndex["" + term] == undefined) {
-                        let posting = Object.create(null);
+                        var posting = Object.create(null);
                         posting["_index"] = this.termIndex;
                         this.termIndex += 1;
-                        for (let k = 0; k < fields.length; k++) {
+                        for (var k = 0; k < fields.length; k++) {
                             posting[fields[k]] = Object.create(null);
                         }
                         this.invertedIndex["" + term] = posting;
@@ -2445,8 +2516,8 @@ var lunr;
                     }
                     // store all whitelisted metadata about this token in the
                     // inverted index
-                    for (let l = 0; l < this.metadataWhitelist.length; l++) {
-                        let metadataKey = this.metadataWhitelist[l], metadata = term.metadata[metadataKey];
+                    for (var l = 0; l < this.metadataWhitelist.length; l++) {
+                        var metadataKey = this.metadataWhitelist[l], metadata = term.metadata[metadataKey];
                         if (this.invertedIndex["" + term][fieldName][docRef][metadataKey] == undefined) {
                             this.invertedIndex["" + term][fieldName][docRef][metadataKey] = [];
                         }
@@ -2454,47 +2525,50 @@ var lunr;
                     }
                 }
             }
-        }
+        };
         /**
          * Calculates the average document length for this index
          *
          * @private
          */
-        calculateAverageFieldLengths() {
-            let fieldRefs = Object.keys(this.fieldLengths), accumulator = {}, documentsWithField = {};
-            for (const fieldRefName of fieldRefs) {
-                let fieldRef = lunr.FieldRef.fromString(fieldRefName), field = fieldRef.fieldName;
+        Builder.prototype.calculateAverageFieldLengths = function () {
+            var fieldRefs = Object.keys(this.fieldLengths), accumulator = {}, documentsWithField = {};
+            for (var _i = 0, fieldRefs_1 = fieldRefs; _i < fieldRefs_1.length; _i++) {
+                var fieldRefName = fieldRefs_1[_i];
+                var fieldRef = lunr.FieldRef.fromString(fieldRefName), field = fieldRef.fieldName;
                 documentsWithField[field] || (documentsWithField[field] = 0);
                 documentsWithField[field] += 1;
                 accumulator[field] || (accumulator[field] = 0);
                 accumulator[field] += this.fieldLengths["" + fieldRef];
             }
-            let fields = Object.keys(this._fields);
-            for (const fieldName of fields) {
+            var fields = Object.keys(this._fields);
+            for (var _a = 0, fields_2 = fields; _a < fields_2.length; _a++) {
+                var fieldName = fields_2[_a];
                 accumulator[fieldName] = accumulator[fieldName] / documentsWithField[fieldName];
             }
             return accumulator;
-        }
+        };
         /**
          * Builds a vector space model of every document using lunr.Vector
          *
          * @private
          */
-        createFieldVectors(averageFieldLength) {
-            let fieldVectors = {}, fieldRefs = Object.keys(this.fieldTermFrequencies), termIdfCache = Object.create(null);
-            for (const fieldRefName of fieldRefs) {
-                let fieldRef = lunr.FieldRef.fromString(fieldRefName), fieldName = fieldRef.fieldName, fieldLength = this.fieldLengths["" + fieldRef], fieldVector = new lunr.Vector, termFrequencies = this.fieldTermFrequencies["" + fieldRef], terms = Object.keys(termFrequencies), termsLength = terms.length;
-                let fieldBoost = this._fields[fieldName].boost || 1, docBoost = this._documents[fieldRef.docRef].boost || 1;
-                for (let j = 0; j < termsLength; j++) {
-                    let term = terms[j], tf = termFrequencies[term], termIndex = this.invertedIndex[term]._index, idf, score, scoreWithPrecision;
+        Builder.prototype.createFieldVectors = function (averageFieldLength) {
+            var fieldVectors = {}, fieldRefs = Object.keys(this.fieldTermFrequencies), termIdfCache = Object.create(null);
+            for (var _i = 0, fieldRefs_2 = fieldRefs; _i < fieldRefs_2.length; _i++) {
+                var fieldRefName = fieldRefs_2[_i];
+                var fieldRef = lunr.FieldRef.fromString(fieldRefName), fieldName = fieldRef.fieldName, fieldLength = this.fieldLengths["" + fieldRef], fieldVector = new lunr.Vector, termFrequencies = this.fieldTermFrequencies["" + fieldRef], terms = Object.keys(termFrequencies), termsLength = terms.length;
+                var fieldBoost = this._fields[fieldName].boost || 1, docBoost = this._documents[fieldRef.docRef].boost || 1;
+                for (var j = 0; j < termsLength; j++) {
+                    var term = terms[j], tf = termFrequencies[term], termIndex = this.invertedIndex[term]._index, idf_1 = void 0, score = void 0, scoreWithPrecision = void 0;
                     if (termIdfCache[term] === undefined) {
-                        idf = lunr.idf(this.invertedIndex[term], this.documentCount);
-                        termIdfCache[term] = idf;
+                        idf_1 = lunr.idf(this.invertedIndex[term], this.documentCount);
+                        termIdfCache[term] = idf_1;
                     }
                     else {
-                        idf = termIdfCache[term];
+                        idf_1 = termIdfCache[term];
                     }
-                    score = idf * ((this._k1 + 1) * tf) / (this._k1 * (1 - this._b + this._b * (fieldLength / averageFieldLength[fieldName])) + tf);
+                    score = idf_1 * ((this._k1 + 1) * tf) / (this._k1 * (1 - this._b + this._b * (fieldLength / averageFieldLength[fieldName])) + tf);
                     score *= fieldBoost;
                     score *= docBoost;
                     scoreWithPrecision = Math.round(score * 1000) / 1000;
@@ -2509,21 +2583,21 @@ var lunr;
                 fieldVectors["" + fieldRef] = fieldVector;
             }
             return fieldVectors;
-        }
+        };
         /**
          * Creates a token set of all tokens in the index using lunr.TokenSet
          *
          * @private
          */
-        createTokenSet() {
+        Builder.prototype.createTokenSet = function () {
             return lunr.TokenSet.fromArray(Object.keys(this.invertedIndex).sort());
-        }
+        };
         /**
          * @private
          */
-        createNumberMap() {
+        Builder.prototype.createNumberMap = function () {
             return lunr.NumberMap.fromInvertedIndex(this.invertedIndex);
-        }
+        };
         /**
          * Builds the index, creating an instance of lunr.Index.
          *
@@ -2532,7 +2606,8 @@ var lunr;
          *
          * @returns {lunr.Index}
          */
-        build() {
+        Builder.prototype.build = function () {
+            var _this = this;
             this.averageFieldLength = this.calculateAverageFieldLengths();
             this.fieldVectors = this.createFieldVectors(this.averageFieldLength);
             this.tokenSet = this.createTokenSet();
@@ -2543,10 +2618,10 @@ var lunr;
                 tokenSet: this.tokenSet,
                 numberMap: this.numberMap,
                 fields: Object.keys(this._fields),
-                fieldTypes: Object.keys(this._fields).map(fieldName => this._fields[fieldName].type || "string"),
+                fieldTypes: Object.keys(this._fields).map(function (fieldName) { return _this._fields[fieldName].type || "string"; }),
                 pipeline: this.searchPipeline
             });
-        }
+        };
         /**
          * Applies a plugin to the index builder.
          *
@@ -2561,11 +2636,15 @@ var lunr;
          *
          * @param {Function} fn The plugin to apply.
          */
-        use(fn, ...args) {
-            fn.bind(this, this)(...args);
-            fn.call(this, this, ...args);
-        }
-    }
+        Builder.prototype.use = function (fn) {
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
+            }
+            fn.call.apply(fn, [this, this].concat(args));
+        };
+        return Builder;
+    }());
     lunr.Builder = Builder;
 })(lunr || (lunr = {}));
 /**
@@ -2593,20 +2672,22 @@ var lunr;
      * @property {Object<string, string[]>} metadata - A cloned collection of metadata associated with this document.
      * @see {@link lunr.Index~Result}
      */
-    class MatchData {
+    var MatchData = /** @class */ (function () {
         /**
          * @param {string} [term] - The term this match data is associated with
          * @param {string} [field] - The field in which the term was found
          * @param {Object<string, string[]>} [metadata] - The metadata recorded about this term in this field
          */
-        constructor(term, field, metadata = {}) {
-            let clonedMetadata = Object.create(null), metadataKeys = Object.keys(metadata);
+        function MatchData(term, field, metadata) {
+            if (metadata === void 0) { metadata = {}; }
+            var clonedMetadata = Object.create(null), metadataKeys = Object.keys(metadata);
             // Cloning the metadata to prevent the original
             // being mutated during match data combination.
             // Metadata is kept in an array within the inverted
             // index so cloning the data can be done with
             // Array#slice
-            for (const key of metadataKeys) {
+            for (var _i = 0, metadataKeys_1 = metadataKeys; _i < metadataKeys_1.length; _i++) {
+                var key = metadataKeys_1[_i];
                 clonedMetadata[key] = metadata[key].slice();
             }
             this.metadata = Object.create(null);
@@ -2624,19 +2705,22 @@ var lunr;
          * @param {lunr.MatchData} otherMatchData - Another instance of match data to merge with this one.
          * @see {@link lunr.Index~Result}
          */
-        combine(otherMatchData) {
-            let terms = Object.keys(otherMatchData.metadata);
-            for (const term of terms) {
-                let fields = Object.keys(otherMatchData.metadata[term]);
+        MatchData.prototype.combine = function (otherMatchData) {
+            var terms = Object.keys(otherMatchData.metadata);
+            for (var _i = 0, terms_2 = terms; _i < terms_2.length; _i++) {
+                var term = terms_2[_i];
+                var fields = Object.keys(otherMatchData.metadata[term]);
                 if (this.metadata[term] == undefined) {
                     this.metadata[term] = Object.create(null);
                 }
-                for (const field of fields) {
-                    let keys = Object.keys(otherMatchData.metadata[term][field]);
+                for (var _a = 0, fields_3 = fields; _a < fields_3.length; _a++) {
+                    var field = fields_3[_a];
+                    var keys = Object.keys(otherMatchData.metadata[term][field]);
                     if (this.metadata[term][field] == undefined) {
                         this.metadata[term][field] = Object.create(null);
                     }
-                    for (const key of keys) {
+                    for (var _b = 0, keys_2 = keys; _b < keys_2.length; _b++) {
+                        var key = keys_2[_b];
                         if (this.metadata[term][field][key] == undefined) {
                             this.metadata[term][field][key] = otherMatchData.metadata[term][field][key];
                         }
@@ -2646,7 +2730,7 @@ var lunr;
                     }
                 }
             }
-        }
+        };
         /**
          * Add metadata for a term/field pair to this instance of match data.
          *
@@ -2654,7 +2738,7 @@ var lunr;
          * @param {string} field - The field in which the term was found
          * @param {Object<string, string>} metadata - The metadata recorded about this term in this field
          */
-        add(term, field, metadata) {
+        MatchData.prototype.add = function (term, field, metadata) {
             if (!(term in this.metadata)) {
                 this.metadata[term] = Object.create(null);
                 this.metadata[term][field] = metadata;
@@ -2664,8 +2748,9 @@ var lunr;
                 this.metadata[term][field] = metadata;
                 return;
             }
-            let metadataKeys = Object.keys(metadata);
-            for (const key of metadataKeys) {
+            var metadataKeys = Object.keys(metadata);
+            for (var _i = 0, metadataKeys_2 = metadataKeys; _i < metadataKeys_2.length; _i++) {
+                var key = metadataKeys_2[_i];
                 if (key in this.metadata[term][field]) {
                     this.metadata[term][field][key] = this.metadata[term][field][key].concat(metadata[key]);
                 }
@@ -2673,8 +2758,9 @@ var lunr;
                     this.metadata[term][field][key] = metadata[key];
                 }
             }
-        }
-    }
+        };
+        return MatchData;
+    }());
     lunr.MatchData = MatchData;
 })(lunr || (lunr = {}));
 // @ts-ignore
@@ -2689,13 +2775,13 @@ var lunr;
      *
      * @memberOf lunr
      */
-    class Query {
+    var Query = /** @class */ (function () {
         /**
          * @param {string[]} allFields An array of all available fields in a lunr.Index
          * @param {Array<"string" | "number">} [allFieldTypes] An array of all field types in a lunr.Index
          * @param {lunr.NumberMap} [numberMap]
          */
-        constructor(allFields, allFieldTypes, numberMap) {
+        function Query(allFields, allFieldTypes, numberMap) {
             /** An array of query clauses. */
             this.clauses = [];
             this.clauses = [];
@@ -2712,14 +2798,14 @@ var lunr;
          * @param {lunr.Query~Clause} clause The clause to add to this query.
          * @see lunr.Query~Clause
          */
-        clause(clause) {
+        Query.prototype.clause = function (clause) {
             if (!('fields' in clause)) {
                 if (typeof clause.term === "object") {
-                    const numberFields = [];
-                    const numberTypes = [];
+                    var numberFields = [];
+                    var numberTypes = [];
                     if (this.allFieldTypes) {
-                        for (let i = 0; i < this.allFields.length; i++) {
-                            const type = this.allFieldTypes[i];
+                        for (var i = 0; i < this.allFields.length; i++) {
+                            var type = this.allFieldTypes[i];
                             if (type === "number") {
                                 numberFields.push(this.allFields[i]);
                                 numberTypes.push("number");
@@ -2757,7 +2843,7 @@ var lunr;
             }
             this.clauses.push(clause);
             return this;
-        }
+        };
         /**
          * A negated query is one in which every clause has a presence of
          * prohibited. These queries require some special processing to return
@@ -2765,14 +2851,14 @@ var lunr;
          *
          * @returns boolean
          */
-        isNegated() {
+        Query.prototype.isNegated = function () {
             for (var i = 0; i < this.clauses.length; i++) {
                 if (this.clauses[i].presence != Query.presence.PROHIBITED) {
                     return false;
                 }
             }
             return true;
-        }
+        };
         /**
          * Adds a term to the current query, under the covers this will create a {@link lunr.Query~Clause}
          * to the list of clauses that make up this query.
@@ -2799,17 +2885,16 @@ var lunr;
          * @example <caption>using lunr.tokenizer to convert a string to tokens before using them as terms</caption>
          * query.term(lunr.tokenizer("foo bar"))
          */
-        term(term, options = {}) {
+        Query.prototype.term = function (term, options) {
+            var _this = this;
+            if (options === void 0) { options = {}; }
             if (Array.isArray(term)) {
-                term.forEach((t) => { this.term(t, lunr.utils.clone(options)); });
+                term.forEach(function (t) { _this.term(t, lunr.utils.clone(options)); });
                 return this;
             }
-            this.clause({
-                ...options,
-                term: term.toString()
-            });
+            this.clause(__assign({}, options, { term: term.toString() }));
             return this;
-        }
+        };
         /**
          * Adds a comparator term to the current query, under the covers this will create a {@link lunr.Query~Clause}
          * to the list of clauses that make up this query.
@@ -2825,13 +2910,11 @@ var lunr;
          *   fields: ["wordCount"]
          * })
          */
-        comparator(comparator, comparand, options = {}) {
-            this.clause({
-                ...options,
-                term: { comparator, comparand }
-            });
+        Query.prototype.comparator = function (comparator, comparand, options) {
+            if (options === void 0) { options = {}; }
+            this.clause(__assign({}, options, { term: { comparator: comparator, comparand: comparand } }));
             return this;
-        }
+        };
         /**
          * Adds a range term to the current query, under the covers this will create a {@link lunr.Query~Clause}
          * to the list of clauses that make up this query.
@@ -2847,14 +2930,13 @@ var lunr;
          *   fields: ["wordCount"]
          * })
          */
-        range(start, end, options = {}) {
-            this.clause({
-                ...options,
-                term: { start, end }
-            });
+        Query.prototype.range = function (start, end, options) {
+            if (options === void 0) { options = {}; }
+            this.clause(__assign({}, options, { term: { start: start, end: end } }));
             return this;
-        }
-    }
+        };
+        return Query;
+    }());
     lunr.Query = Query;
     (function (Query) {
         Query.wildcardChar = "*";
@@ -2883,7 +2965,7 @@ var lunr;
          *   wildcard: lunr.Query.wildcard.LEADING | lunr.Query.wildcard.TRAILING
          * })
          */
-        let wildcard;
+        var wildcard;
         (function (wildcard) {
             /** The term will have no wildcards inserted, this is the default behaviour */
             wildcard[wildcard["NONE"] = 0] = "NONE";
@@ -2910,7 +2992,7 @@ var lunr;
          * @example <caption>query term with required presence</caption>
          * query.term('foo', { presence: lunr.Query.presence.REQUIRED })
          */
-        let presence;
+        var presence;
         (function (presence) {
             /**
              * Term's presence in a document is optional, this is the default value.
@@ -2942,7 +3024,7 @@ var lunr;
          * @see lunr.Query#clause
          * @see lunr.Query#term
          */
-        let comparator;
+        var comparator;
         (function (comparator) {
             /** The field's value must be greater than (`>`) the comparand. */
             comparator["GREATERTHAN"] = ">";
@@ -2992,22 +3074,29 @@ var lunr;
 // @ts-ignore
 var lunr;
 (function (lunr) {
-    class QueryParseError extends Error {
-        constructor(message, start, end) {
-            super(message);
-            this.name = "QueryParseError";
-            this.message = message;
-            this.start = start;
-            this.end = end;
+    var QueryParseError = /** @class */ (function (_super) {
+        __extends(QueryParseError, _super);
+        function QueryParseError(message, start, end) {
+            var _newTarget = this.constructor;
+            var _this = _super.call(this, message) || this;
+            if (typeof Object.setPrototypeOf === "function") {
+                Object.setPrototypeOf(_this, _newTarget.prototype);
+            }
+            _this.name = "QueryParseError";
+            _this.message = message;
+            _this.start = start;
+            _this.end = end;
+            return _this;
         }
-    }
+        return QueryParseError;
+    }(Error));
     lunr.QueryParseError = QueryParseError;
 })(lunr || (lunr = {}));
 // @ts-ignore
 var lunr;
 (function (lunr) {
-    class QueryLexer {
-        constructor(str) {
+    var QueryLexer = /** @class */ (function () {
+        function QueryLexer(str) {
             this.lexemes = [];
             this.pos = 0;
             this.start = 0;
@@ -3015,13 +3104,13 @@ var lunr;
             this.str = str;
             this.length = str.length;
         }
-        run() {
-            let state = lexText;
+        QueryLexer.prototype.run = function () {
+            var state = lexText;
             while (state) {
                 state = state(this);
             }
-        }
-        sliceString() {
+        };
+        QueryLexer.prototype.sliceString = function () {
             var subSlices = [], sliceStart = this.start, sliceEnd = this.pos;
             for (var i = 0; i < this.escapeCharPositions.length; i++) {
                 sliceEnd = this.escapeCharPositions[i];
@@ -3031,11 +3120,11 @@ var lunr;
             subSlices.push(this.str.slice(sliceStart, this.pos));
             this.escapeCharPositions.length = 0;
             return subSlices.join('');
-        }
+        };
         /**
          * @param {LexemeType} type
          */
-        emit(type) {
+        QueryLexer.prototype.emit = function (type) {
             this.lexemes.push({
                 type: type,
                 str: this.sliceString(),
@@ -3043,39 +3132,39 @@ var lunr;
                 end: this.pos
             });
             this.start = this.pos;
-        }
-        escapeCharacter() {
+        };
+        QueryLexer.prototype.escapeCharacter = function () {
             this.escapeCharPositions.push(this.pos - 1);
             this.pos += 1;
-        }
-        next() {
+        };
+        QueryLexer.prototype.next = function () {
             if (this.pos >= this.length) {
                 return QueryLexer.EOS;
             }
             var char = this.str.charAt(this.pos);
             this.pos += 1;
             return char;
-        }
-        peek() {
+        };
+        QueryLexer.prototype.peek = function () {
             if (this.pos >= this.length) {
                 return QueryLexer.EOS;
             }
             var char = this.str.charAt(this.pos);
             return char;
-        }
-        width() {
+        };
+        QueryLexer.prototype.width = function () {
             return this.pos - this.start;
-        }
-        ignore() {
+        };
+        QueryLexer.prototype.ignore = function () {
             if (this.start == this.pos) {
                 this.pos += 1;
             }
             this.start = this.pos;
-        }
-        backup() {
+        };
+        QueryLexer.prototype.backup = function () {
             this.pos -= 1;
-        }
-        acceptDigitRun() {
+        };
+        QueryLexer.prototype.acceptDigitRun = function () {
             var char, charCode;
             do {
                 char = this.next();
@@ -3084,35 +3173,36 @@ var lunr;
             if (char != QueryLexer.EOS) {
                 this.backup();
             }
-        }
-        more() {
+        };
+        QueryLexer.prototype.more = function () {
             return this.pos < this.length;
-        }
-    }
-    QueryLexer.EOS = "EOS";
-    QueryLexer.FIELD = "FIELD";
-    QueryLexer.TERM = "TERM";
-    QueryLexer.EDIT_DISTANCE = "EDIT_DISTANCE";
-    QueryLexer.BOOST = "BOOST";
-    QueryLexer.PRESENCE = "PRESENCE";
-    QueryLexer.COMPARATOR = "COMPARATOR";
-    QueryLexer.COMPARAND = "COMPARAND";
-    QueryLexer.RANGE_START = "RANGE_START";
-    QueryLexer.RANGE_END = "RANGE_END";
-    // This matches the separator used when tokenising fields
-    // within a document. These should match otherwise it is
-    // not possible to search for some tokens within a document.
-    //
-    // It is possible for the user to change the separator on the
-    // tokenizer so it _might_ clash with any other of the special
-    // characters already used within the search string, e.g. :.
-    //
-    // This means that it is possible to change the separator in
-    // such a way that makes some words unsearchable using a search
-    // string.
-    QueryLexer.termSeparator = lunr.tokenizer.separator;
+        };
+        QueryLexer.EOS = "EOS";
+        QueryLexer.FIELD = "FIELD";
+        QueryLexer.TERM = "TERM";
+        QueryLexer.EDIT_DISTANCE = "EDIT_DISTANCE";
+        QueryLexer.BOOST = "BOOST";
+        QueryLexer.PRESENCE = "PRESENCE";
+        QueryLexer.COMPARATOR = "COMPARATOR";
+        QueryLexer.COMPARAND = "COMPARAND";
+        QueryLexer.RANGE_START = "RANGE_START";
+        QueryLexer.RANGE_END = "RANGE_END";
+        // This matches the separator used when tokenising fields
+        // within a document. These should match otherwise it is
+        // not possible to search for some tokens within a document.
+        //
+        // It is possible for the user to change the separator on the
+        // tokenizer so it _might_ clash with any other of the special
+        // characters already used within the search string, e.g. :.
+        //
+        // This means that it is possible to change the separator in
+        // such a way that makes some words unsearchable using a search
+        // string.
+        QueryLexer.termSeparator = lunr.tokenizer.separator;
+        return QueryLexer;
+    }());
     lunr.QueryLexer = QueryLexer;
-    const lexField = lexer => {
+    var lexField = function (lexer) {
         lexer.backup();
         lexer.emit(QueryLexer.FIELD);
         lexer.ignore();
@@ -3131,7 +3221,7 @@ var lunr;
         }
         return lexText;
     };
-    const lexRange = lexer => {
+    var lexRange = function (lexer) {
         lexer.backup();
         if (lexer.width() > 0) {
             lexer.emit(QueryLexer.RANGE_START);
@@ -3162,7 +3252,7 @@ var lunr;
             }
         }
     };
-    const lexTerm = lexer => {
+    var lexTerm = function (lexer) {
         if (lexer.width() > 1) {
             lexer.backup();
             lexer.emit(QueryLexer.TERM);
@@ -3172,24 +3262,24 @@ var lunr;
             return lexText;
         }
     };
-    const lexEditDistance = lexer => {
+    var lexEditDistance = function (lexer) {
         lexer.ignore();
         lexer.acceptDigitRun();
         lexer.emit(QueryLexer.EDIT_DISTANCE);
         return lexText;
     };
-    const lexBoost = lexer => {
+    var lexBoost = function (lexer) {
         lexer.ignore();
         lexer.acceptDigitRun();
         lexer.emit(QueryLexer.BOOST);
         return lexText;
     };
-    const lexEOS = lexer => {
+    var lexEOS = function (lexer) {
         if (lexer.width() > 0) {
             lexer.emit(QueryLexer.TERM);
         }
     };
-    const lexText = lexer => {
+    var lexText = function (lexer) {
         while (true) {
             var char = lexer.next();
             if (char == QueryLexer.EOS) {
@@ -3244,8 +3334,8 @@ var lunr;
 // @ts-ignore
 var lunr;
 (function (lunr) {
-    class QueryParser {
-        constructor(str, query) {
+    var QueryParser = /** @class */ (function () {
+        function QueryParser(str, query) {
             this.currentClause = {};
             this.currentComparator = undefined;
             this.currentRange = undefined;
@@ -3253,34 +3343,35 @@ var lunr;
             this.lexer = new lunr.QueryLexer(str);
             this.query = query;
         }
-        parse() {
+        QueryParser.prototype.parse = function () {
             this.lexer.run();
             this.lexemes = this.lexer.lexemes;
-            let state = parseClause;
+            var state = parseClause;
             while (state) {
                 state = state(this);
             }
             return this.query;
-        }
-        peekLexeme() {
+        };
+        QueryParser.prototype.peekLexeme = function () {
             return this.lexemes[this.lexemeIdx];
-        }
-        consumeLexeme() {
-            let lexeme = this.peekLexeme();
+        };
+        QueryParser.prototype.consumeLexeme = function () {
+            var lexeme = this.peekLexeme();
             this.lexemeIdx += 1;
             return lexeme;
-        }
-        nextClause() {
-            let completedClause = this.currentClause;
+        };
+        QueryParser.prototype.nextClause = function () {
+            var completedClause = this.currentClause;
             this.query.clause(completedClause);
             this.currentClause = {};
             this.currentComparator = undefined;
             this.currentRange = undefined;
-        }
-    }
+        };
+        return QueryParser;
+    }());
     lunr.QueryParser = QueryParser;
-    const parseClause = parser => {
-        let lexeme = parser.peekLexeme();
+    var parseClause = function (parser) {
+        var lexeme = parser.peekLexeme();
         if (lexeme == undefined) {
             return;
         }
@@ -3292,7 +3383,7 @@ var lunr;
             case lunr.QueryLexer.TERM:
                 return parseTerm;
             default: {
-                let errorMessage = "expected either a field or a term, found " + lexeme.type;
+                var errorMessage = "expected either a field or a term, found " + lexeme.type;
                 if (lexeme.str.length >= 1) {
                     errorMessage += " with value '" + lexeme.str + "'";
                 }
@@ -3300,8 +3391,8 @@ var lunr;
             }
         }
     };
-    const parsePresence = parser => {
-        let lexeme = parser.consumeLexeme();
+    var parsePresence = function (parser) {
+        var lexeme = parser.consumeLexeme();
         if (lexeme == undefined) {
             return;
         }
@@ -3313,13 +3404,13 @@ var lunr;
                 parser.currentClause.presence = lunr.Query.presence.REQUIRED;
                 break;
             default: {
-                let errorMessage = "unrecognised presence operator'" + lexeme.str + "'";
+                var errorMessage = "unrecognised presence operator'" + lexeme.str + "'";
                 throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
             }
         }
-        let nextLexeme = parser.peekLexeme();
+        var nextLexeme = parser.peekLexeme();
         if (nextLexeme == undefined) {
-            let errorMessage = "expecting term or field, found nothing";
+            var errorMessage = "expecting term or field, found nothing";
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
         }
         switch (nextLexeme.type) {
@@ -3328,28 +3419,28 @@ var lunr;
             case lunr.QueryLexer.TERM:
                 return parseTerm;
             default: {
-                let errorMessage = "expecting term or field, found '" + nextLexeme.type + "'";
+                var errorMessage = "expecting term or field, found '" + nextLexeme.type + "'";
                 throw new lunr.QueryParseError(errorMessage, nextLexeme.start, nextLexeme.end);
             }
         }
     };
-    const parseField = parser => {
-        let lexeme = parser.consumeLexeme();
+    var parseField = function (parser) {
+        var lexeme = parser.consumeLexeme();
         if (lexeme == undefined) {
             return;
         }
-        let fieldIndex = parser.query.allFields.indexOf(lexeme.str);
+        var fieldIndex = parser.query.allFields.indexOf(lexeme.str);
         if (fieldIndex == -1) {
-            let possibleFields = parser.query.allFields.map(function (f) { return "'" + f + "'"; }).join(', '), errorMessage = "unrecognised field '" + lexeme.str + "', possible fields: " + possibleFields;
+            var possibleFields = parser.query.allFields.map(function (f) { return "'" + f + "'"; }).join(', '), errorMessage = "unrecognised field '" + lexeme.str + "', possible fields: " + possibleFields;
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
         }
         parser.currentClause.fields = [lexeme.str];
         if (parser.query.allFieldTypes) {
             parser.currentClause.fieldTypes = [parser.query.allFieldTypes[fieldIndex]];
         }
-        let nextLexeme = parser.peekLexeme();
+        var nextLexeme = parser.peekLexeme();
         if (nextLexeme == undefined) {
-            let errorMessage = "expecting term or operator, found nothing";
+            var errorMessage = "expecting term or operator, found nothing";
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
         }
         switch (nextLexeme.type) {
@@ -3360,26 +3451,27 @@ var lunr;
             case lunr.QueryLexer.COMPARATOR:
                 return parseComparator;
             default: {
-                let errorMessage = "expecting term, found '" + nextLexeme.type + "'";
+                var errorMessage = "expecting term, found '" + nextLexeme.type + "'";
                 throw new lunr.QueryParseError(errorMessage, nextLexeme.start, nextLexeme.end);
             }
         }
     };
-    const parseRangeStart = parser => {
-        let lexeme = parser.consumeLexeme();
+    var parseRangeStart = function (parser) {
+        var lexeme = parser.consumeLexeme();
         if (lexeme == undefined) {
             return;
         }
         if (parser.currentClause.fieldTypes) {
-            for (const fieldType of parser.currentClause.fieldTypes) {
+            for (var _i = 0, _a = parser.currentClause.fieldTypes; _i < _a.length; _i++) {
+                var fieldType = _a[_i];
                 if (fieldType !== "number") {
-                    let errorMessage = "ranges are only supported on fields of type 'number'";
+                    var errorMessage = "ranges are only supported on fields of type 'number'";
                     throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
                 }
             }
         }
         else {
-            let errorMessage = "ranges are only supported on fields of type 'number'";
+            var errorMessage = "ranges are only supported on fields of type 'number'";
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
         }
         parser.currentRange = {};
@@ -3389,27 +3481,27 @@ var lunr;
         else {
             parser.currentRange.start = lunr.utils.parseNumber(lexeme.str);
             if (isNaN(parser.currentRange.start)) {
-                let errorMessage = "range start must be numeric or '*'";
+                var errorMessage = "range start must be numeric or '*'";
                 throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
             }
         }
         parser.currentClause.usePipeline = false;
-        let nextLexeme = parser.peekLexeme();
+        var nextLexeme = parser.peekLexeme();
         if (nextLexeme == undefined) {
-            let errorMessage = "expecting range end, found nothing";
+            var errorMessage = "expecting range end, found nothing";
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
         }
         switch (nextLexeme.type) {
             case lunr.QueryLexer.RANGE_END:
                 return parseRangeEnd;
             default: {
-                let errorMessage = "expecting range end, found '" + nextLexeme.type + "'";
+                var errorMessage = "expecting range end, found '" + nextLexeme.type + "'";
                 throw new lunr.QueryParseError(errorMessage, nextLexeme.start, nextLexeme.end);
             }
         }
     };
-    const parseRangeEnd = parser => {
-        let lexeme = parser.consumeLexeme();
+    var parseRangeEnd = function (parser) {
+        var lexeme = parser.consumeLexeme();
         if (lexeme == undefined) {
             return;
         }
@@ -3421,13 +3513,13 @@ var lunr;
         else {
             parser.currentRange.end = lunr.utils.parseNumber(lexeme.str);
             if (isNaN(parser.currentRange.end)) {
-                let errorMessage = "range end must be numeric or '*'";
+                var errorMessage = "range end must be numeric or '*'";
                 throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
             }
         }
         parser.currentClause.term = parser.currentRange;
         parser.currentRange = undefined;
-        let nextLexeme = parser.peekLexeme();
+        var nextLexeme = parser.peekLexeme();
         if (nextLexeme == undefined) {
             parser.nextClause();
             return;
@@ -3436,26 +3528,27 @@ var lunr;
             case lunr.QueryLexer.TERM:
                 return parseTerm;
             default: {
-                let errorMessage = "expecting term, found '" + nextLexeme.type + "'";
+                var errorMessage = "expecting term, found '" + nextLexeme.type + "'";
                 throw new lunr.QueryParseError(errorMessage, nextLexeme.start, nextLexeme.end);
             }
         }
     };
-    const parseComparator = parser => {
-        let lexeme = parser.consumeLexeme();
+    var parseComparator = function (parser) {
+        var lexeme = parser.consumeLexeme();
         if (lexeme == undefined) {
             return;
         }
         if (parser.currentClause.fieldTypes) {
-            for (const fieldType of parser.currentClause.fieldTypes) {
+            for (var _i = 0, _a = parser.currentClause.fieldTypes; _i < _a.length; _i++) {
+                var fieldType = _a[_i];
                 if (fieldType !== "number") {
-                    let errorMessage = "comparators are only supported on fields of type 'number'";
+                    var errorMessage = "comparators are only supported on fields of type 'number'";
                     throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
                 }
             }
         }
         else {
-            let errorMessage = "comparators are only supported on fields of type 'number'";
+            var errorMessage = "comparators are only supported on fields of type 'number'";
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
         }
         parser.currentComparator = {};
@@ -3468,22 +3561,22 @@ var lunr;
                 parser.currentComparator.comparator = lexeme.str;
                 break;
         }
-        let nextLexeme = parser.peekLexeme();
+        var nextLexeme = parser.peekLexeme();
         if (nextLexeme == undefined) {
-            let errorMessage = "expecting term, found nothing";
+            var errorMessage = "expecting term, found nothing";
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
         }
         switch (nextLexeme.type) {
             case lunr.QueryLexer.COMPARAND:
                 return parseComparand;
             default: {
-                let errorMessage = "expecting comparand, found '" + nextLexeme.type + "'";
+                var errorMessage = "expecting comparand, found '" + nextLexeme.type + "'";
                 throw new lunr.QueryParseError(errorMessage, nextLexeme.start, nextLexeme.end);
             }
         }
     };
-    const parseComparand = parser => {
-        let lexeme = parser.consumeLexeme();
+    var parseComparand = function (parser) {
+        var lexeme = parser.consumeLexeme();
         if (lexeme == undefined) {
             return;
         }
@@ -3491,12 +3584,12 @@ var lunr;
             throw new Error();
         parser.currentComparator.comparand = lunr.utils.parseNumber(lexeme.str);
         if (isNaN(parser.currentComparator.comparand)) {
-            let errorMessage = "comparand must be numeric";
+            var errorMessage = "comparand must be numeric";
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
         }
         parser.currentClause.term = parser.currentComparator;
         parser.currentComparator = undefined;
-        let nextLexeme = parser.peekLexeme();
+        var nextLexeme = parser.peekLexeme();
         if (nextLexeme == undefined) {
             parser.nextClause();
             return;
@@ -3505,13 +3598,13 @@ var lunr;
             case lunr.QueryLexer.TERM:
                 return parseTerm;
             default: {
-                let errorMessage = "expecting term, found '" + nextLexeme.type + "'";
+                var errorMessage = "expecting term, found '" + nextLexeme.type + "'";
                 throw new lunr.QueryParseError(errorMessage, nextLexeme.start, nextLexeme.end);
             }
         }
     };
-    const parseTerm = parser => {
-        let lexeme = parser.consumeLexeme();
+    var parseTerm = function (parser) {
+        var lexeme = parser.consumeLexeme();
         if (lexeme == undefined) {
             return;
         }
@@ -3519,7 +3612,7 @@ var lunr;
         if (lexeme.str.indexOf("*") != -1) {
             parser.currentClause.usePipeline = false;
         }
-        let nextLexeme = parser.peekLexeme();
+        var nextLexeme = parser.peekLexeme();
         if (nextLexeme == undefined) {
             parser.nextClause();
             return;
@@ -3539,23 +3632,23 @@ var lunr;
                 parser.nextClause();
                 return parsePresence;
             default: {
-                let errorMessage = "Unexpected lexeme type '" + nextLexeme.type + "'";
+                var errorMessage = "Unexpected lexeme type '" + nextLexeme.type + "'";
                 throw new lunr.QueryParseError(errorMessage, nextLexeme.start, nextLexeme.end);
             }
         }
     };
-    const parseEditDistance = parser => {
-        let lexeme = parser.consumeLexeme();
+    var parseEditDistance = function (parser) {
+        var lexeme = parser.consumeLexeme();
         if (lexeme == undefined) {
             return;
         }
-        let editDistance = parseInt(lexeme.str, 10);
+        var editDistance = parseInt(lexeme.str, 10);
         if (isNaN(editDistance)) {
-            let errorMessage = "edit distance must be numeric";
+            var errorMessage = "edit distance must be numeric";
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
         }
         parser.currentClause.editDistance = editDistance;
-        let nextLexeme = parser.peekLexeme();
+        var nextLexeme = parser.peekLexeme();
         if (nextLexeme == undefined) {
             parser.nextClause();
             return;
@@ -3575,23 +3668,23 @@ var lunr;
                 parser.nextClause();
                 return parsePresence;
             default: {
-                let errorMessage = "Unexpected lexeme type '" + nextLexeme.type + "'";
+                var errorMessage = "Unexpected lexeme type '" + nextLexeme.type + "'";
                 throw new lunr.QueryParseError(errorMessage, nextLexeme.start, nextLexeme.end);
             }
         }
     };
-    const parseBoost = parser => {
-        let lexeme = parser.consumeLexeme();
+    var parseBoost = function (parser) {
+        var lexeme = parser.consumeLexeme();
         if (lexeme == undefined) {
             return;
         }
-        let boost = parseInt(lexeme.str, 10);
+        var boost = parseInt(lexeme.str, 10);
         if (isNaN(boost)) {
-            let errorMessage = "boost must be numeric";
+            var errorMessage = "boost must be numeric";
             throw new lunr.QueryParseError(errorMessage, lexeme.start, lexeme.end);
         }
         parser.currentClause.boost = boost;
-        let nextLexeme = parser.peekLexeme();
+        var nextLexeme = parser.peekLexeme();
         if (nextLexeme == undefined) {
             parser.nextClause();
             return;
@@ -3611,7 +3704,7 @@ var lunr;
                 parser.nextClause();
                 return parsePresence;
             default: {
-                let errorMessage = "Unexpected lexeme type '" + nextLexeme.type + "'";
+                var errorMessage = "Unexpected lexeme type '" + nextLexeme.type + "'";
                 throw new lunr.QueryParseError(errorMessage, nextLexeme.start, nextLexeme.end);
             }
         }

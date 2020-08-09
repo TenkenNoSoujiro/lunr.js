@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
         "noEmitOnError": true,
-        "target": "esnext",
+        "lib": ["esnext", "dom"],
+        "target": "es5",
         "module": "none",
         "strict": true,
         "noImplicitUseStrict": true,

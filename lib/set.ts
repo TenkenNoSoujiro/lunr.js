@@ -33,8 +33,8 @@ namespace lunr {
       intersect (other: Set) {
         return other
       }
-      union (other: Set) {
-        return other
+      union (_other: Set) {
+        return this
       }
     }
 

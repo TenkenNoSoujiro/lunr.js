@@ -188,6 +188,13 @@ namespace lunr {
       let docRef = (doc as any)[this._ref],
           fields = Object.keys(this._fields)
 
+      if (typeof docRef !== 'string' && typeof docRef !== 'symbol') {
+        docRef = `${docRef}`
+      }
+      if (typeof docRef !== 'string') {
+        throw new Error(`Property '${this._ref}' is invalid or missing.`)
+      }
+
       this._documents[docRef] = attributes
       this.documentCount += 1
 
@@ -396,7 +403,6 @@ namespace lunr {
      * @param {Function} fn The plugin to apply.
      */
     use <A extends any[]> (fn: (this: this, builder: this, ...args: A) => void, ...args: A): void {
-      fn.bind(this, this)(...args);
       fn.call(this, this, ...args)
     }
   }

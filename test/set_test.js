@@ -1,3 +1,5 @@
+const { assert } = require("chai")
+
 suite('lunr.Set', function () {
   suite('#contains', function () {
     suite('complete set', function () {
@@ -36,6 +38,7 @@ suite('lunr.Set', function () {
       test('contains element', function () {
         var result = lunr.Set.complete.union(this.set)
         assert.isOk(result.contains('foo'))
+        assert.isOk(result.contains('bar'))
       })
     })
 
@@ -43,6 +46,7 @@ suite('lunr.Set', function () {
       test('contains element', function () {
         var result = lunr.Set.empty.union(this.set)
         assert.isOk(result.contains('foo'))
+        assert.isNotOk(result.contains('bar'))
       })
     })
 
@@ -136,6 +140,7 @@ suite('lunr.Set', function () {
               result = target.intersect(lunr.Set.complete)
 
           assert.isOk(result.contains('foo'))
+          assert.isNotOk(result.contains('bar'))
         })
       })
     })
